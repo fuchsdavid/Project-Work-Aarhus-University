@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -17,6 +18,12 @@
             <children>
                 <TextField fx:id="login" prefWidth="378.0" promptText="Login" />
                 <PasswordField fx:id="password" promptText="Password" />
+                <Pane prefHeight="23.0" prefWidth="376.0">
+                    <children>
+                        <Label layoutX="6.0" text="Don't have an account?" />
+                  <Hyperlink layoutX="130.0" layoutY="-3.0" onAction="#switchToCreateAccountScene" text="Sign Up" textFill="#ef2323" />
+                    </children>
+                </Pane>
             <Label fx:id="feedback" style="-fx-text-fill: red;" />
                 <Pane prefHeight="31.0" prefWidth="376.0">
                     <children>
