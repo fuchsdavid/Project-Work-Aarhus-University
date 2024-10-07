@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.habittracker.ButtonController">
+    <children>
+        <Circle fx:id="circle" fill="WHITE" layoutX="300.0" layoutY="200.0" onMouseClicked="#mouseclicked" radius="58.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="3.0" />
+    </children>
+</AnchorPane>

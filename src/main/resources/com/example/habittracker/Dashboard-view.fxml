@@ -11,7 +11,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.habittracker.DashboardController">
    <children>
       <BorderPane prefHeight="400.0" prefWidth="600.0">
@@ -141,37 +140,37 @@
                         </Text>
                         <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.rowIndex="2">
                            <children>
-                              <Circle fill="#3a51ca" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
+                              <Circle fill="#3a51ca" onMouseClicked="#handleCircleClick" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Circle fill="#3a51ca" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
+                              <Circle fill="#3a51ca" onMouseClicked="#handleCircleClick" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <children>
-                              <Circle fill="WHITE" radius="9.0" stroke="#23379e" strokeType="INSIDE" />
+                              <Circle fill="WHITE" onMouseClicked="#handleCircleClick" radius="9.0" stroke="#23379e" strokeType="INSIDE" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
                            <children>
-                              <Circle fill="#3a51ca" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
+                              <Circle fill="#3a51ca" onMouseClicked="#handleCircleClick" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="2">
                            <children>
-                              <Circle fill="#3a51ca" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
+                              <Circle fill="#3a51ca" onMouseClicked="#handleCircleClick" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="2">
                            <children>
-                              <Circle fill="WHITE" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
+                              <Circle fill="WHITE" onMouseClicked="#handleCircleClick" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="2">
                            <children>
-                              <Circle fill="#3a51ca" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
+                              <Circle fill="#3a51ca" onMouseClicked="#handleCircleClick" radius="9.0" stroke="#22369f" strokeType="INSIDE" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="7" GridPane.rowIndex="2">
