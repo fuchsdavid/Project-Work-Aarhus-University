@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
 
 import java.util.Optional;
 
-public class DashboardController {
+public class TestDashboardController {
 
     @FXML
     private Button newHabitButton;
