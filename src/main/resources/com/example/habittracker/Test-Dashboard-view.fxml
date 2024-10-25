@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -31,6 +32,16 @@
                                                 <Font size="10.0" />
                                             </font>
                                         </Text>
+                                    </children>
+                                </Pane>
+                                <Pane id="uploadimage" layoutX="21.0" layoutY="163.0" onMouseClicked="#handleImageUpload" prefHeight="100.0" prefWidth="100.0" style="-fx-background-radius: 15; -fx-background-color: DFDFDF;">
+                                    <children>
+                                        <Text fill="#313161" layoutX="18.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload Image">
+                                            <font>
+                                                <Font size="10.0" />
+                                            </font>
+                                        </Text>
+                                        <ImageView fx:id="imageView" fitHeight="112.0" fitWidth="104.0" layoutX="-3.0" layoutY="-6.0" preserveRatio="true" />
                                     </children>
                                 </Pane>
                             </children></Pane>
