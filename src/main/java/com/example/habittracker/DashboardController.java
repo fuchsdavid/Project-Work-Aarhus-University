@@ -131,7 +131,7 @@ public class DashboardController {
 
         // Setze den Abstand zwischen den Zeilen (VBox, die die Kreise aufnimmt)
         if (CirclePane instanceof VBox) {
-            ((VBox) CirclePane).setSpacing(15); // Vertikaler Abstand zwischen den Zeilen
+            ((VBox) CirclePane).setSpacing(33); // Vertikaler Abstand zwischen den Zeilen
         }
 
         // Füge die neue HBox mit den Kreisen und dem Streak-Zähler zur CirclePane hinzu
