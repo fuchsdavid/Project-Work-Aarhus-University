@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -19,6 +21,30 @@ public class ProfileViewController {
 
     @FXML
     private ImageView profilePictureImageView;
+
+    @FXML
+    private Button editName;
+
+    @FXML
+    private Button okName;
+
+    @FXML
+    private Button okEmail;
+
+    @FXML
+    private Button editEmail;
+
+    @FXML
+    private TextField newName;
+
+    @FXML
+    private TextField newEmail;
+
+    @FXML
+    private Label nameLabel;
+
+    @FXML
+    private Label emailLabel;
 
     Stage stage;
     Scene scene;
@@ -75,5 +101,40 @@ public class ProfileViewController {
         catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public void onEditNameClicked(){
+        nameLabel.setText("  ");
+        nameLabel.setVisible(false);
+        newName.clear();
+        newName.setVisible(true);
+        editName.setVisible(false);
+        okName.setVisible(true);
+
+    }
+    public void onSaveNameClicked(){
+        nameLabel.setText("your name");
+        nameLabel.setVisible(true);
+        newName.setVisible(false);
+        editName.setVisible(true);
+        okName.setVisible(false);
+
+    }
+
+    public void onEditEmailClicked(){
+        emailLabel.setText("  ");
+        emailLabel.setVisible(false);
+        newEmail.clear();
+        newEmail.setVisible(true);
+        editEmail.setVisible(false);
+        okEmail.setVisible(true);
+
+    }
+    public void onSaveEmailClicked(){
+        emailLabel.setText("your e-mail");
+        emailLabel.setVisible(true);
+        newEmail.setVisible(false);
+        editEmail.setVisible(true);
+        okEmail.setVisible(false);
     }
 }

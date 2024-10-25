@@ -19,3 +19,9 @@
     -fx-text-fill: white;
     -fx-font-size: 15;
 }
+.edit-button{
+    -fx-background-color: transparent;
+    -fx-text-fill: #22369f;
+    -fx-font-size: 10;
+    -fx-padding: 0;
+}
