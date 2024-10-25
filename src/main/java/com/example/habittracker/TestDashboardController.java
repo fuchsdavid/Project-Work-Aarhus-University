@@ -13,7 +13,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.Optional;
 
 public class TestDashboardController {
@@ -25,6 +29,8 @@ public class TestDashboardController {
     private VBox HabitPane; // Pane für die neuen Habits
     @FXML
     private VBox CirclePane; // Pane für die Kreise
+    @FXML
+    private ImageView imageView; // ImageView zum Anzeigen des hochgeladenen Bildes
 
     // Definieren des spezifischen Blautons
     private final Color circleColor = Color.web("#3A51CA");
@@ -34,8 +40,41 @@ public class TestDashboardController {
     public void initialize() {
         // Event-Handler für den Button + new habit
         newHabitButton.setOnAction(event -> addNewHabit());
+
+        // Initiale Einstellungen für die ImageView
+        imageView.setPreserveRatio(true); // Seitenverhältnis beibehalten
+        imageView.setFitWidth(300); // Setze die Breite (kann angepasst werden)
+        imageView.setFitHeight(200); // Setze die Höhe (kann angepasst werden)
+        imageView.setStyle("-fx-alignment: center;"); // Zentriert das Bild
     }
 
+    // Methode zum Hochladen eines Bildes
+    @FXML
+    private void handleImageUpload(MouseEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Image File");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
+
+        // Öffne den FileChooser und warte auf die Benutzeraktion
+        File selectedFile = fileChooser.showOpenDialog(imageView.getScene().getWindow());
+        if (selectedFile != null) {
+            // Lade das Bild und zeige es im ImageView an
+            Image image = new Image(selectedFile.toURI().toString());
+            imageView.setImage(image);
+
+            // Setze die ImageView auf die Größe des Bildes, um es zu zentrieren
+            imageView.setFitWidth(HabitPane.getWidth()); // Füllt die gesamte Breite der Pane
+            imageView.setFitHeight(HabitPane.getHeight()); // Füllt die gesamte Höhe der Pane
+        } else {
+            // Zeige eine Warnung an, wenn kein Bild ausgewählt wurde
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No image selected.");
+            alert.setTitle("Warning");
+            alert.showAndWait();
+        }
+    
+    }
+
+    // Methode zum Hochladen eines Bildes
     private void handleCircleClick(MouseEvent event) {
         Circle clickedCircle = (Circle) event.getSource();
         if (clickedCircle.getFill() == defaultColor) {
@@ -174,21 +213,22 @@ public class TestDashboardController {
 
         for (boolean clicked : circleClicked) {
             if (clicked) {
-                currentStreak[0]++;  // Erhöhe den Streak, wenn der Tag geklickt wurde
-                missedCount = 0;     // Setze den Zähler für ausgelassene Tage zurück
+                if (missedCount > 0) {
+                    missedCount = 0; // Setze den Zähler zurück, wenn ein Tag erledigt wurde
+                }
+                currentStreak[0]++; // Erhöhe den Streak-Zähler
             } else {
-                missedCount++;       // Erhöhe den Zähler für ausgelassene Tage
-
-                if (missedCount == 2) {
-                    // Wenn zwei aufeinanderfolgende Tage verpasst wurden, beende den Streak
-                    streakIsActive = false;
-                    break; // Verlasse die Schleife, da der Streak unterbrochen ist
+                missedCount++; // Erhöhe den Zähler für ausgelassene Tage
+                if (missedCount >= 2) { // Streak unterbrochen
+                    streakIsActive = false; // Setze Streak-Status auf inaktiv
+                    break; // Beende die Schleife
                 }
             }
         }
 
-        if (!streakIsActive) {
-            currentStreak[0] = 0; // Wenn zwei Tage in Folge verpasst wurden, setze den Streak auf 0
+        // Wenn der Streak aktiv ist, gebe die Anzahl der Tage zurück
+        if (streakIsActive) {
+            currentStreak[0] += missedCount; // Füge die ausgelassenen Tage zum Streak hinzu
         }
     }
 }

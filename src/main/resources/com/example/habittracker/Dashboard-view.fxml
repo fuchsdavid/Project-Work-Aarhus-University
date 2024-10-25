@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.habittracker.TestDashboardController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.habittracker.DashboardController">
    <children>
       <BorderPane prefHeight="400.0" prefWidth="600.0">
          <left>
@@ -27,6 +27,15 @@
                                  </font>
                               </Text>
                               <Text fill="#313161" layoutX="17.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Jocko Willink">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </Pane>
+                        <Pane id="uploadimage" layoutX="21.0" layoutY="163.0" prefHeight="100.0" prefWidth="100.0" style="-fx-background-radius: 15; -fx-background-color: DFDFDF;">
+                           <children>
+                              <Text fill="#313161" layoutX="18.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload Image">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
