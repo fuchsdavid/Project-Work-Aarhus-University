@@ -1,0 +1,60 @@
+CREATE TABLE User (
+    UserName VARCHAR(64) PRIMARY KEY,
+    Name VARCHAR(64) NOT NULL,
+    Surname VARCHAR(64) NOT NULL,
+	Age INT NOT NULL,
+	Email VARCHAR(64) NOT NULL,
+	Password VARCHAR(64) NOT NULL
+);
+
+CREATE TABLE HabitCategory (
+    /*Habit_Cat_ID INT PRIMARY KEY AUTO_INCREMENT,*/
+    Habit_Cat_Name VARCHAR(255) PRIMARY KEY,
+    Description VARCHAR(1024)
+);
+
+CREATE TABLE Habit (
+    Habit_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(64) NOT NULL,
+    Description VARCHAR(1024) NOT NULL,
+    
+	Habit_Cat_Name VARCHAR(255),
+	FOREIGN KEY (Habit_Cat_Name) REFERENCES HabitCategory(Habit_Cat_Name)
+);
+
+CREATE TABLE User_Habit (
+	UserName VARCHAR(64),
+	Habit_ID INT,
+	FOREIGN KEY (UserName) REFERENCES User(UserName),
+    FOREIGN KEY (Habit_ID) REFERENCES Habit(Habit_ID)
+);
+
+CREATE TABLE Goal (
+	Goal_ID INT PRIMARY KEY AUTO_INCREMENT,
+	Description VARCHAR (1024),
+	Value VARCHAR (32) NOT NULL
+);
+
+CREATE TABLE Journal (
+	Journal_ID INT PRIMARY KEY AUTO_INCREMENT,
+	Current_Streak INT NOT NULL,
+	Start_Date DATE NOT NULL,
+	End_Date DATE,
+	Activity_Type VARCHAR (32) NOT NULL,
+
+	Habit_ID INT,
+	UserName VARCHAR(64),
+	Goal_ID INT,
+	FOREIGN KEY (UserName) REFERENCES User(UserName),
+	FOREIGN KEY (Habit_ID) REFERENCES Habit(Habit_ID),
+	FOREIGN KEY (Goal_ID) REFERENCES Goal(Goal_ID)
+);
+
+CREATE TABLE Entry (
+	Entry_ID INT PRIMARY KEY AUTO_INCREMENT,
+	Date DATE NOT NULL,
+	Value VARCHAR (32) NOT NULL,
+
+	Journal_ID INT,
+	FOREIGN KEY (Journal_ID) REFERENCES Journal(Journal_ID)
+);
