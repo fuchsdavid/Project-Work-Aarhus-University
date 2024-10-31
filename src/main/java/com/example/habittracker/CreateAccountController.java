@@ -10,12 +10,20 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import org.database.User;
+import org.database.services.UserService;
 
+import javax.persistence.EntityExistsException;
 import java.io.IOException;
+import java.util.regex.PatternSyntaxException;
 
 public class CreateAccountController {
     @FXML
     private TextField name;
+    @FXML
+    private TextField surname;
+    @FXML
+    private TextField age;
     @FXML
     private TextField login;
     @FXML
@@ -26,7 +34,7 @@ public class CreateAccountController {
     private PasswordField repeatPassword;
     @FXML
     private Label feedback;
-    enum ErrorCode{NO_ERROR, PASSWORD, REPEAT_PASSWORD, EMAIL, EMPTY_FIELD, EMAIL_TAKEN, USERNAME_TAKEN}
+    enum ErrorCode{NO_ERROR, PASSWORD, REPEAT_PASSWORD, EMAIL, EMPTY_FIELD, EMAIL_TAKEN, USERNAME_TAKEN, AGE}
     private Stage stage;
     private Scene scene;
     public Parent parent;
@@ -65,15 +73,23 @@ public class CreateAccountController {
         else if(result == ErrorCode.USERNAME_TAKEN){
             feedback.setText("This username is already in use");
         }
+        else if(result == ErrorCode.AGE){
+            feedback.setText("Enter correct age");
+        }
         else{
             feedback.setText("");
-            saveInDatabase();
-            EmailController.sendWelcomeEmail(email.getText(), name.getText());
+            try {
+                saveInDatabase();
+            }
+            catch (Exception e){
+                feedback.setText("Something went wrong");
+            }
+            //EmailController.sendWelcomeEmail(email.getText(), name.getText());    //uncomment!
             switchToLoginView();
         }
     }
     private ErrorCode validateRegisterForm(){
-        TextField[] allFields = {name,login,email,password,repeatPassword};
+        TextField[] allFields = {name,login,email,password,repeatPassword, surname, age};
         for (TextField field : allFields) {
             if (field.getText().equals("")) {
                 return ErrorCode.EMPTY_FIELD;
@@ -94,22 +110,53 @@ public class CreateAccountController {
         if(checkIfUserNameTaken(login.getText())){
             return ErrorCode.USERNAME_TAKEN;
         }
+        try {
+            int ageValue = Integer.parseInt(age.getText());
+            if(ageValue < 3 || ageValue > 120){
+                return ErrorCode.AGE;
+            }
+        }
+        catch(NumberFormatException e){
+            return ErrorCode.AGE;
+        }
         return ErrorCode.NO_ERROR;
+
     }
     private Boolean checkIfUserNameTaken(String username){
-        /*TODO
-        checks if the username is already in the database
-         */
-        return false;
+        //checks if the username is already in the database
+        UserService userService = new UserService();
+
+        try {
+            User user = userService.getUser(username); // get a user by it's username
+        } catch (Exception e) {
+            userService.stopConnection();
+            return false;
+        }
+        return true;
     }
     private Boolean checkIfEmailTaken(String email){
-        /*TODO
-        checks if email is already in the database
-         */
-        return false;
+        //checks if email is already in the database
+        UserService userService = new UserService();
+
+        try {
+            User user = userService.getUserByEmail(email); // get a user by it's username
+        } catch (Exception e) {
+            userService.stopConnection();
+            return false;
+        }
+        userService.stopConnection();
+        return true;
+
     }
     private void saveInDatabase(){
-
+        UserService userService = new UserService();
+        try {
+            userService.addUser(login.getText(), name.getText(), surname.getText(), Integer.parseInt(age.getText()), email.getText(), password.getText());
+        } catch (Exception e) {
+            userService.stopConnection();
+            throw new EntityExistsException("unable to add a user");
+        }
+        userService.stopConnection();
     }
 
     private void switchToLoginView(){

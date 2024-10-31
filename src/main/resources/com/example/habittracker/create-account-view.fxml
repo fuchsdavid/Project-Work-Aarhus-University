@@ -15,7 +15,9 @@
       <AnchorPane layoutX="257.0" layoutY="86.0" prefHeight="453.0" prefWidth="462.0" styleClass="some_panel" stylesheets="@createAccount.css" />
       <VBox layoutX="296.0" layoutY="196.0" prefHeight="511.0" prefWidth="376.0" spacing="10.0">
          <children>
-            <TextField fx:id="name" alignment="TOP_LEFT" promptText="Your Name" stylesheets="@createAccount.css" />
+            <TextField fx:id="name" alignment="TOP_LEFT" promptText="Name" stylesheets="@createAccount.css" />
+            <TextField fx:id="surname" alignment="TOP_LEFT" promptText="Surname" stylesheets="@createAccount.css" />
+            <TextField fx:id="age" alignment="TOP_LEFT" promptText="Age" stylesheets="@createAccount.css" />
             <TextField fx:id="login" promptText="Login" />
             <TextField fx:id="email" promptText="Email" />
             <PasswordField fx:id="password" promptText="Password" />

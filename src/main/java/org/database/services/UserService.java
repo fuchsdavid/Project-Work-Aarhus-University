@@ -102,6 +102,17 @@ public class UserService extends DataBase {
         return em.createQuery(criteriaQuery).getResultList();
     }
 
+    public User getUserByEmail(String email) {
+        List<User> users = getAllUsers();
+        for (User user : users) {
+            if(Objects.equals(user.getEmail(), email)) {
+                return user;
+            }
+        }
+        throw new EntityNotFoundException("User with email: " + email + " not found");
+
+    }
+
     @Transactional
     public void deleteUser(User userToDelete) {
         User userInDB = em.find(User.class, userToDelete.getUserName());

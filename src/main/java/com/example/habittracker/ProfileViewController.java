@@ -26,10 +26,16 @@ public class ProfileViewController {
     private Button editName;
 
     @FXML
+    private Button editSurame;
+
+    @FXML
     private Button okName;
 
     @FXML
     private Button okEmail;
+
+    @FXML
+    private Button okSurname;
 
     @FXML
     private Button editEmail;
@@ -41,10 +47,17 @@ public class ProfileViewController {
     private TextField newEmail;
 
     @FXML
+    private TextField newSurname;
+
+    @FXML
     private Label nameLabel;
 
     @FXML
     private Label emailLabel;
+
+    @FXML
+    private Label surnameLabel;
+
 
     Stage stage;
     Scene scene;
@@ -136,5 +149,21 @@ public class ProfileViewController {
         newEmail.setVisible(false);
         editEmail.setVisible(true);
         okEmail.setVisible(false);
+    }
+    public void onEditSurnameClicked(){
+        surnameLabel.setText("  ");
+        surnameLabel.setVisible(false);
+        newSurname.clear();
+        newSurname.setVisible(true);
+        editSurame.setVisible(false);
+        okSurname.setVisible(true);
+
+    }
+    public void onSaveSurnameClicked(){
+        surnameLabel.setText("Your last name");
+        surnameLabel.setVisible(true);
+        newSurname.setVisible(false);
+        editSurame.setVisible(true);
+        okSurname.setVisible(false);
     }
 }
