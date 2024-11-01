@@ -108,7 +108,7 @@ public class ProfileViewController {
         usernameLabel.setText(userDB.getUserName());
         emailLabel.setText(userDB.getEmail());
         surnameLabel.setText(userDB.getSurname());
-        nameLabel.setText(userDB.getUserName());
+        nameLabel.setText(userDB.getName());
         ageLabel.setText(userDB.getAge().toString());
     }
     public void changeProfilePicture(){
@@ -211,6 +211,4 @@ public class ProfileViewController {
         action.apply(userDB, newData);
         userService.stopConnection();
     }
-
-
 }
