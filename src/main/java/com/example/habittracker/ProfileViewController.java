@@ -1,5 +1,6 @@
 package com.example.habittracker;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,8 +12,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.database.User;
+import org.database.services.UserService;
 
 import java.io.*;
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.IntConsumer;
 
 
 public class ProfileViewController {
@@ -57,10 +64,53 @@ public class ProfileViewController {
 
     @FXML
     private Label surnameLabel;
-
+    @FXML
+    private Label usernameLabel;
+    @FXML
+    private Label ageLabel;
 
     Stage stage;
     Scene scene;
+    DomainUser user;
+
+    UserService userService;
+
+    @FunctionalInterface
+    interface UserStringFunction {
+        void apply(User user, String x);
+    }
+    public void initialize() {
+        Platform.runLater(()-> {
+            receiveData();
+            userService = new UserService();
+            try {
+                User userDB = getUserFromDatabase();
+                fillInUserData(userDB);
+
+            } catch (Exception e) {
+                userService.stopConnection();
+                return;
+            }
+            userService.stopConnection();
+        });
+    }
+    private void receiveData(){
+        stage = (Stage)(editName.getScene().getWindow());
+        user = (DomainUser) stage.getUserData();
+
+    }
+
+    private User getUserFromDatabase() throws Exception{
+        User userDB = userService.getUser(user.GetUserName()); // get a user by it's username
+        return userDB;
+    }
+    private void fillInUserData(User userDB){
+        usernameLabel.setText(userDB.getUserName());
+        emailLabel.setText(userDB.getEmail());
+        surnameLabel.setText(userDB.getSurname());
+        nameLabel.setText(userDB.getUserName());
+        ageLabel.setText(userDB.getAge().toString());
+    }
     public void changeProfilePicture(){
 
         String picture = "profile-pictures/"+openFileChooser();
@@ -115,55 +165,52 @@ public class ProfileViewController {
             e.printStackTrace();
         }
     }
-
     public void onEditNameClicked(){
-        nameLabel.setText("  ");
-        nameLabel.setVisible(false);
-        newName.clear();
-        newName.setVisible(true);
-        editName.setVisible(false);
-        okName.setVisible(true);
-
+        onEditClicked(nameLabel, newName, editName, okName);
     }
     public void onSaveNameClicked(){
-        nameLabel.setText("your name");
-        nameLabel.setVisible(true);
-        newName.setVisible(false);
-        editName.setVisible(true);
-        okName.setVisible(false);
-
+        String newData = onSaveClicked(nameLabel,  newName, editName, okName);
+        updateDatabase(newData, (u, d) -> {userService.updateName(u, d);});
     }
 
     public void onEditEmailClicked(){
-        emailLabel.setText("  ");
-        emailLabel.setVisible(false);
-        newEmail.clear();
-        newEmail.setVisible(true);
-        editEmail.setVisible(false);
-        okEmail.setVisible(true);
-
+        onEditClicked(emailLabel, newEmail, editEmail, okEmail);
     }
     public void onSaveEmailClicked(){
-        emailLabel.setText("your e-mail");
-        emailLabel.setVisible(true);
-        newEmail.setVisible(false);
-        editEmail.setVisible(true);
-        okEmail.setVisible(false);
+        String newData = onSaveClicked(emailLabel, newEmail, editEmail, okEmail);
+        updateDatabase(newData, (u, d) -> {userService.updateEmail(u, d);});
     }
     public void onEditSurnameClicked(){
-        surnameLabel.setText("  ");
-        surnameLabel.setVisible(false);
-        newSurname.clear();
-        newSurname.setVisible(true);
-        editSurame.setVisible(false);
-        okSurname.setVisible(true);
-
+        onEditClicked(surnameLabel, newSurname, editSurame, okSurname);
     }
     public void onSaveSurnameClicked(){
-        surnameLabel.setText("Your last name");
-        surnameLabel.setVisible(true);
-        newSurname.setVisible(false);
-        editSurame.setVisible(true);
-        okSurname.setVisible(false);
+        String newData = onSaveClicked(surnameLabel, newSurname, editSurame, okSurname);
+        updateDatabase(newData, (u, d) -> {userService.updateSurname(u, d);});
     }
+    //168->
+    private String onSaveClicked(Label label, TextField newData, Button editButton, Button okButton){
+        String updatedData = newData.getText();
+        label.setText(updatedData);
+        label.setVisible(true);
+        newData.setVisible(false);
+        editButton.setVisible(true);
+        okButton.setVisible(false);
+        return updatedData;
+    }
+    private void onEditClicked(Label label, TextField newData, Button editButton, Button okButton){
+        label.setText("  ");
+        label.setVisible(false);
+        newData.clear();
+        newData.setVisible(true);
+        editButton.setVisible(false);
+        okButton.setVisible(true);
+    }
+    private void updateDatabase(String newData, UserStringFunction action){
+        userService = new UserService();
+        User userDB = userService.getUser(user.GetUserName());
+        action.apply(userDB, newData);
+        userService.stopConnection();
+    }
+
+
 }

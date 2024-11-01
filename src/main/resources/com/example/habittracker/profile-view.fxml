@@ -38,7 +38,7 @@
                         <Insets right="10.0" />
                      </opaqueInsets>
                   </Label>
-                  <Label styleClass="text-field" text="Your username" textFill="WHITE">
+                  <Label fx:id="usernameLabel" styleClass="text-field" text="Your username" textFill="WHITE">
                      <opaqueInsets>
                         <Insets left="100.0" />
                      </opaqueInsets></Label>
@@ -50,10 +50,10 @@
             <HBox prefHeight="0.0" prefWidth="370.0">
                <children>
                   <Label style="-fx-text-fill: blue;" styleClass="text-field" text="Name           " />
-                  <Label fx:id="nameLabel1" styleClass="text-field" stylesheets="@profile.css" text="Your Name" textFill="WHITE" />
-                  <Button fx:id="editName1" mnemonicParsing="false" onAction="#onEditNameClicked" prefHeight="23.0" prefWidth="54.0" styleClass="edit-button" text="Edit" />
-                  <TextField fx:id="newName1" prefHeight="29.0" prefWidth="169.0" style="-fx-text-fill: black;" visible="false" />
-                  <Button fx:id="okName1" mnemonicParsing="false" onAction="#onSaveNameClicked" prefHeight="30.0" prefWidth="54.0" styleClass="edit-button" text="Save" visible="false" />
+                  <Label fx:id="nameLabel" styleClass="text-field" stylesheets="@profile.css" text="Your Name" textFill="WHITE" />
+                  <Button fx:id="editName" mnemonicParsing="false" onAction="#onEditNameClicked" prefHeight="23.0" prefWidth="54.0" styleClass="edit-button" text="Edit" />
+                  <TextField fx:id="newName" prefHeight="29.0" prefWidth="169.0" style="-fx-text-fill: black;" visible="false" />
+                  <Button fx:id="okName" mnemonicParsing="false" onAction="#onSaveNameClicked" prefHeight="30.0" prefWidth="54.0" styleClass="edit-button" text="Save" visible="false" />
                </children>
                <padding>
                   <Insets left="10.0" top="10.0" />
@@ -86,7 +86,7 @@
             <HBox prefHeight="0.0" prefWidth="370.0">
                <children>
                   <Label style="-fx-text-fill: blue;" styleClass="text-field" text="Age              " />
-                  <Label fx:id="nameLabel2" styleClass="text-field" stylesheets="@profile.css" text="Your Name" textFill="WHITE" />
+                  <Label fx:id="ageLabel" styleClass="text-field" stylesheets="@profile.css" text="Your Age" textFill="WHITE" />
                   <TextField fx:id="newName2" prefHeight="29.0" prefWidth="169.0" style="-fx-text-fill: black;" visible="false" />
                   <Button fx:id="okName2" mnemonicParsing="false" onAction="#onSaveNameClicked" prefHeight="30.0" prefWidth="54.0" styleClass="edit-button" text="Save" visible="false" />
                </children>

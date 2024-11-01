@@ -160,9 +160,11 @@ public class CreateAccountController {
     }
 
     private void switchToLoginView(){
+        //DomainUser user = new DomainUser(login.getText());
         try {
             Parent root = FXMLLoader.load(getClass().getResource("login-view.fxml"));
             stage = (Stage) name.getScene().getWindow();
+           // stage.setUserData(user);
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
