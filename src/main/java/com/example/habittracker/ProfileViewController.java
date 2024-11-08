@@ -110,21 +110,62 @@ public class ProfileViewController {
         surnameLabel.setText(userDB.getSurname());
         nameLabel.setText(userDB.getName());
         ageLabel.setText(userDB.getAge().toString());
+        fillInProfilePicture(userDB.getImageID());
     }
-    public void changeProfilePicture(){
 
-        String picture = "profile-pictures/"+openFileChooser();
-        System.out.println("Here: + " + picture);
-        InputStream input = getClass().getResourceAsStream(picture);
+    private void fillInProfilePicture(String imageID){
+        if(imageID == null){
+            System.out.println("Image ID is null");
+            setDefaultProfilePicture();
+        }
+        else{
+            setProfilePicture(imageID);
+        }
+    }
+
+
+    private void setDefaultProfilePicture(){
+        String defaultPath = "profile-pictures/default.png";
+        setProfilePicture(defaultPath);
+    }
+
+    public void setProfilePicture(String path){
+
+        //String picture = "profile-pictures/"+openFileChooser();
+        //System.out.println("Here: + " + picture);
+        InputStream input = getClass().getResourceAsStream(path);
         Image image = null;
 
         if(input != null){
             image = new Image(input);
+            System.out.println("null1");
         }
 
-        if(picture != "profile_pictures/" && image != null){
+        if(path != "profile_pictures/" && image != null){
+            System.out.println("null1");
             profilePictureImageView.setImage(image);
         }
+    }
+
+    public void changeProfilePicture(){
+        String picture = "profile-pictures/"+openFileChooser();
+        updateProfilePictureInDatabase(picture);
+        this.initialize();
+        //setProfilePicture(picture);
+
+    }
+
+
+    private void updateProfilePictureInDatabase(String newImageID){
+        userService = new UserService();
+        try {
+            User userDB = getUserFromDatabase();
+            userService.updateImage(userDB, newImageID);
+        } catch (Exception e) {
+            userService.stopConnection();
+            return;
+        }
+        userService.stopConnection();
     }
 
     public String openFileChooser(){

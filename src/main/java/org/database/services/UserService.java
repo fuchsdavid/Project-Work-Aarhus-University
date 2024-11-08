@@ -71,6 +71,17 @@ public class UserService extends DataBase {
         this.em.getTransaction().commit();
     }
 
+    public void updateImage(User user, String newImage) {
+        User userInDB = em.find(User.class, user.getUserName());
+        if (userInDB == null) {
+            throw new EntityNotFoundException("User " + user.getUserName() + " not found");
+        }
+
+        this.em.getTransaction().begin();
+        user.setImageID(newImage);
+        this.em.getTransaction().commit();
+    }
+
     public void updateEmail(User user, String newEmail) {
         User userInDB = em.find(User.class, user.getUserName());
         if (userInDB == null) {

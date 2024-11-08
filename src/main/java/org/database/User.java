@@ -28,6 +28,9 @@ public class User {
     @Column(name = "Password", nullable = false)
     private String password;
 
+    @Column(name = "ImageID", nullable = true)
+    private String imageID;
+
     public User(){}
 
     public User(String userName, String name, String surname, Integer age, String email, String password) {
@@ -37,6 +40,7 @@ public class User {
         this.age = age;
         this.email = email;
         this.password = password;
+        this.imageID = null;
     }
 
     public String getEmail() {
@@ -78,6 +82,14 @@ public class User {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public void setImageID(String imageID) {
+        this.imageID = imageID;
+    }
+
+    public String getImageID(){
+        return imageID;
     }
 
 
