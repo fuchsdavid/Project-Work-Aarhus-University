@@ -15,6 +15,5 @@ module com.example.habittracker {
 
 
     opens com.example.habittracker to javafx.fxml;
-
     exports com.example.habittracker;
 }
