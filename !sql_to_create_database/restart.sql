@@ -12,7 +12,7 @@ CREATE TABLE User (
     Surname VARCHAR(64) NOT NULL,
 	Age INT NOT NULL,
 	Email VARCHAR(64) NOT NULL,
-	Password VARCHAR(64) NOT NULL,
+	Password VARCHAR(1024) NOT NULL,
     ImageID VARCHAR(64)
 );
 

@@ -104,7 +104,7 @@ public class LoginController {
             return false;
         }
         if(user != null){
-            if(!user.getPassword().equals(password.getText())) {
+            if (!userService.checkPassword(user, password.getText())){
                 userService.stopConnection();
                 return false;
             }
