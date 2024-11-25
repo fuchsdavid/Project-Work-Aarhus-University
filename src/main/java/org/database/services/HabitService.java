@@ -1,47 +1,105 @@
 package org.database.services;
 
-import org.database.Habit;
-import org.database.HabitCategory;
 
+import org.database.*;
+
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Objects;
 
 public class HabitService extends DataBase {
-    public Habit addHabit(String name, String description, HabitCategory habit_cat) {
-        Habit to_add = new Habit(name, description, habit_cat);
 
-        em.getTransaction().begin();
-        em.persist(to_add);
 
-        em.getTransaction().commit();
-        System.out.println("Added " + to_add.getId());
+    public Habit addHabitToUser(String name, User user) {
 
-        return to_add;
-    }
-
-    public void changeName(Habit h, String newName) {
-        em.getTransaction().begin();
-
-        Habit hInDB = em.find(Habit.class, h.getId());
-        if (hInDB == null) {
-            throw new EntityNotFoundException("Habit " + h.getId() + " not found");
+        if (em.find(User.class, user.getUserName()) == null) {
+            throw new EntityNotFoundException("User "+ user.getUserName() +" not found");
         }
 
-        h.setName(newName);
+        Habit habitToAdd = new Habit(name, user);
+
+        List<Habit> habits = this.getAllHabits();
+        for (Habit h : habits) {
+            if(Objects.equals(h, habitToAdd)) {
+                throw new EntityExistsException("habit " + name + " already exists");
+            }
+        }
+
+        em.getTransaction().begin();
+        em.persist(habitToAdd);
+        em.getTransaction().commit();
+        System.out.println("Added " + habitToAdd.getHabitName());
+        return habitToAdd;
+    }
+
+    public List<Habit> getAllHabits() {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Habit> criteriaQuery = criteriaBuilder.createQuery(Habit.class);
+        Root<Habit> root = criteriaQuery.from(Habit.class);
+
+        criteriaQuery.select(root);
+
+        return em.createQuery(criteriaQuery).getResultList();
+    }
+
+    public List<Habit> getAllUserHabits(User user) {
+        if (em.find(User.class, user.getUserName()) == null) {
+            throw new EntityNotFoundException("User "+ user.getUserName() +" not found");
+        }
+
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Habit> criteriaQuery = criteriaBuilder.createQuery(Habit.class);
+        Root<Habit> root = criteriaQuery.from(Habit.class);
+
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("user"), user));
+
+        return em.createQuery(criteriaQuery).getResultList();
+    }
+
+    public Habit getUserHabitByName(User user, String habitName) {
+        if (em.find(User.class, user.getUserName()) == null) {
+            throw new EntityNotFoundException("User "+ user.getUserName() +" not found");
+        }
+
+        List<Habit> userHabits = this.getAllUserHabits(user);
+
+        for (Habit h : userHabits) {
+            if (h.getHabitName().equals(habitName)) {
+                return h;
+            }
+        }
+        throw new EntityNotFoundException("Habit "+ habitName + " not found for " + user.getUserName());
+    }
+
+    public void setCurrentStreak(Habit habit, int value) {
+        em.getTransaction().begin();
+
+        Habit habitInDb = em.find(Habit.class, habit.getId());
+        if (habitInDb == null) {
+            throw new EntityNotFoundException("Habit " + habit.getHabitName() + " not found");
+        }
+
+        habitInDb.setCurrentStreak(value);
         em.getTransaction().commit();
     }
 
-    public void changeDescription(Habit h, String newDescription) {
+    public void updateLongestStreak(Habit habit) {
         em.getTransaction().begin();
 
-        Habit hInDB = em.find(Habit.class, h.getId());
-        if (hInDB == null) {
-            throw new EntityNotFoundException("Habit " + h.getId() + " not found");
+        Habit habitInDb = em.find(Habit.class, habit.getId());
+        if (habitInDb == null) {
+            throw new EntityNotFoundException("Habit " + habit.getHabitName() + " not found");
         }
 
-
-        h.setDescription(newDescription);
-        em.getTransaction().commit();
+        if (habitInDb.getCurrentStreak() > habitInDb.getLongestStreak()) {
+            habitInDb.setLongestStreak(habitInDb.getCurrentStreak());
+            em.getTransaction().commit();
+        }
     }
 
     @Transactional
@@ -56,6 +114,4 @@ public class HabitService extends DataBase {
         em.getTransaction().commit();
         System.out.println("Deleted " + h);
     }
-
-
 }

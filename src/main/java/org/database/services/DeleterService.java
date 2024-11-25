@@ -1,70 +1,57 @@
 package org.database.services;
 
 
-import org.database.*;
+import org.database.Entry;
+import org.database.Habit;
+import org.database.User;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.util.List;
 
 public class DeleterService extends DataBase {
 
+    public void deleteHabit(Habit habitToDelete) {
+        HabitService habitService = new HabitService();
+        EntryService entryService = new EntryService();
+
+        Habit habitInDB = em.find(Habit.class, habitToDelete.getId());
+        if (habitInDB == null) {
+            throw new EntityNotFoundException("Habit " + habitToDelete.getHabitName() + " not found");
+        }
+
+        List<Entry> entriesToDelete = entryService.getAllEntriesFromHabit(habitInDB);
+        for (Entry entry : entriesToDelete) {
+            entryService.deleteEntry(entry);
+        }
+
+        habitService.deleteHabit(habitToDelete);
+
+        habitService.stopConnection();
+        entryService.stopConnection();
+        System.out.println("deleted habit");
+    }
+
     public void deleteUser(User userToDelete) {
         UserService userService = new UserService();
+        HabitService habitService = new HabitService();
 
         User userInDB = em.find(User.class, userToDelete.getUserName());
         if (userInDB == null) {
             throw new EntityNotFoundException("User " + userToDelete.getUserName() + " not found");
         }
 
-        //search for journals of this user
-        JournalService journalService = new JournalService();
-        try {
-            List<Journal> journalsToDelete = journalService.getUserJournals(userToDelete);
+        List<Habit> habitsToDelete = habitService.getAllUserHabits(userInDB);
 
-            for (Journal journalToDelete : journalsToDelete) {
-                deleteJournal(journalToDelete);
-            }
-        } catch (Exception e) {
-            System.out.println("journal empty");
+        for(Habit habitToDelete : habitsToDelete) {
+            this.deleteHabit(habitToDelete);
         }
 
         userService.deleteUser(userToDelete);
 
         userService.stopConnection();
-    }
-
-    @Transactional
-    public void deleteJournal(Journal journalToDelete) {
-        Journal journalInDB = em.find(Journal.class, journalToDelete.getId());
-        if (journalInDB == null) {
-            throw new EntityNotFoundException("Journal " + journalToDelete.getId() + " not found");
-        }
-        JournalService journalService = new JournalService();
-        GoalService goalService = new GoalService();
-        EntryService entryService = new EntryService();
-        HabitService habitService = new HabitService();
-
-        // get goal to delete
-        Goal goalToDelete = journalToDelete.getGoal();
-        Habit habitToDelete = journalToDelete.getHabit();
-
-        // get entries to delete
-        List<Entry> entries = journalService.getAllEntriesByJournal(journalToDelete);
-
-        // delete all
-        for (Entry entry : entries) {
-            entryService.deleteEntry(entry);
-        }
-
-        journalService.deleteJournal(journalToDelete);
-        goalService.deleteGoal(goalToDelete);
-        habitService.deleteHabit(habitToDelete);
-
-
         habitService.stopConnection();
-        journalService.stopConnection();
-        goalService.stopConnection();
-        entryService.stopConnection();
     }
+
+
+
 }

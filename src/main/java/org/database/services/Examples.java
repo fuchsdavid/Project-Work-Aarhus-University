@@ -1,9 +1,11 @@
 package org.database.services;
 
+import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
 import org.database.*;
 
 import java.time.LocalDate;
 import java.util.List;
+
 
 public class Examples {
 
@@ -21,6 +23,7 @@ public class Examples {
         db.stopConnection(); // stop the connection
     }
 
+
     public void gettingSingleUser() {
         UserService userService = new UserService();
 
@@ -33,6 +36,8 @@ public class Examples {
 
         userService.stopConnection();
     }
+
+
 
     public void creatingAUser() {
         // user has unique userName and email
@@ -54,198 +59,178 @@ public class Examples {
         userService.stopConnection();
     }
 
-    public void deletingAUser() {
+    public void AddingAHabit() {
+        HabitService habitService = new HabitService(); // create a service
         UserService userService = new UserService();
-        DeleterService deleterService = new DeleterService();
 
-        // create a user
-        // you can save it to variable to use it later
-        User added = userService.addUser("not exists", "", "", 1, "", "");
-        // or can just find it
-        User found = userService.getUser("not exists");
+        User user = userService.getUser("john_doe"); // existing user
+        habitService.addHabitToUser("swimming", user); // non existing habit
 
-        System.out.println(found == added); // those are the same
-
-        deleterService.deleteUser(found);
-
-
-        deleterService.stopConnection();
-        userService.stopConnection();
-    }
-
-
-    public void changingEntityFields() {
-        // it's pretty much the same for every service
-        // you cannot update primary keys
-
-        UserService userService = new UserService();
-        DeleterService deleterService = new DeleterService();
-
-        // add a user and see his instance in console
-        User userAdded = userService.addUser("some_username", "", "", 1, "", "");
-        System.out.println(userAdded);
-
-        userService.updateSurname(userAdded, "some_new_surname");
-        userService.updateName(userAdded, "some_new_name");
-        userService.updateAge(userAdded, 12);
-        userService.updateEmail(userAdded, "some_new_email@email.com");
-        userService.updatePassword(userAdded, "new password");
-
-        // see the updates
-        System.out.println(userAdded);
-
-        // delete it
-        deleterService.deleteUser(userAdded);
-
-        deleterService.stopConnection();
-        userService.stopConnection();
-    }
-
-    public void gettingAHabitCategoryByName() {
-        HabitCategoryService habitCategoryService = new HabitCategoryService();
-        HabitCategory habicCategory = habitCategoryService.getHabitCategoryByName("Health");
-
-        System.out.println(habicCategory);
-
-        habitCategoryService.stopConnection();
-    }
-
-    public void creatingAHabitCategory() {
-        HabitCategoryService habitCategoryService = new HabitCategoryService();
-        HabitCategory hc = habitCategoryService.addHabitCategory("UnHealth", "Some description");
-
-        System.out.println(hc);
-
-        // WARNING
-        // TODO if we want to delete a habit category, we would have to delete ALL journals related to that category
-        boolean dont_do_that = true;
-        if (dont_do_that == true) {
-            habitCategoryService.deleteHabitCategory(hc);
-        }
-
-        habitCategoryService.stopConnection();
-    }
-
-    public void gettingUserJournals() {
-        UserService userService = new UserService();
-        JournalService journalService = new JournalService();
-
-        User johnDoe = userService.getUser("john_doe");
-        List<Journal> johnDoeJournals = journalService.getUserJournals(johnDoe);
-
-        for (Journal journal : johnDoeJournals) {
-            System.out.println(journal);
-        }
-
-        userService.stopConnection();
-        journalService.stopConnection();
-    }
-
-    public void createJournalForUser() {
-        UserService userService = new UserService();
-        JournalService journalService = new JournalService();
-        EntryService entryService = new EntryService();
-        HabitService habitService = new HabitService();
-        HabitCategoryService habitCategoryService = new HabitCategoryService();
-        GoalService goalService = new GoalService();
-        DeleterService deleterService = new DeleterService();
-
-        // new user (to delete later), you can just search for existing with getUser(userName)
-        User brian = userService.addUser("brian_the_great", "brian", "rock", 21, "brian123@gmail.com", "password123");
-
-        // brian wants to do sport
-        HabitCategory categoryForBrian = habitCategoryService.getHabitCategoryByName("Sport");
-
-        // brian set goal to: run for 10km daily
-        Goal goalForBrian = goalService.addGoal("10km", "I want to run for 10km daily");
-
-        // brian need to describe his habit
-        // he specified earlier what HabitCategory for him is
-        Habit habitForBrian = habitService.addHabit("Run", "I want to run so much", categoryForBrian);
-
-        // we are ready to create a journal for his new habit
-        // activity type is a unit to measure
-        Journal newJournal = journalService.addJournal(habitForBrian, goalForBrian, brian, "km");
-
-        // let's see the journal
-        System.out.println(newJournal);
-           /*[JOURNAL FOR brian_the_great]
-	            currentStreak: 0
-	            startDate: 2024-10-25
-	            endDate: null
-	            activity type: km
-	            habit: Run*/
-
-        // let's add some entries
-        Entry entry1 = entryService.addEntry("3km", newJournal);
-        Entry entry2 = entryService.addEntry("4km", newJournal);
-        Entry entry3 = entryService.addEntry("5km", newJournal);
-        Entry entry4 = entryService.addEntry("6km", newJournal);
-
-        // let's see those entries
-        List<Entry> brianEntries = journalService.getAllEntriesByJournal(newJournal);
-        for (Entry entry : brianEntries) {
-            System.out.println(entry);
-        }
-
-        /*[Entry ID: 6
-	        Date: 2024-10-25
-	        Value: 3km
-	        Journal: 8]
-	      (...)
-	    */
-
-        // let's say that brian completed his daily streak TODO need to check if that completes his goal!
-        journalService.incrementCurrentStreak(newJournal);
-
-        // brian decided to quit
-        journalService.setEndDate(newJournal, LocalDate.now());
-
-        // see the changes
-        System.out.println(newJournal);
-
-        /*[JOURNAL FOR brian_the_great]
-	        currentStreak: 1
-	        startDate: 2024-10-25
-	        endDate: 2024-10-25
-	        activity type: km
-	        habit: Run*/
-
-
-        // delete journal takes care for deleting it's goal and all entries
-        deleterService.deleteJournal(newJournal);
-
-        deleterService.deleteUser(brian);
-
-        deleterService.stopConnection();
-        goalService.stopConnection();
-        habitCategoryService.stopConnection();
         habitService.stopConnection();
-        entryService.stopConnection();
-        journalService.stopConnection();
+        userService.stopConnection();
+        // successfully added
+
+
+        // skip this
+        DeleterService deleterService = new DeleterService();
+        deleterService.deleteUser(user);
+        deleterService.stopConnection();
+    }
+
+    public void GettingAUserHabitByName() {
+        HabitService habitService = new HabitService(); // start a service
+        UserService userService = new UserService();
+        User user = userService.getUser("john_doe"); // existing user
+
+
+        Habit habitFoundInDB = habitService.getUserHabitByName(user, "Running"); // existing habit for john doe
+
+
+        habitService.stopConnection();
         userService.stopConnection();
     }
 
+    public void GettingAllUserHabits() {
+        HabitService habitService = new HabitService(); // start a service
+        UserService userService = new UserService();
+        User user = userService.getUser("john_doe"); // existing user
 
 
-    public void ex() {
-        //startingAService();
+        List<Habit> habitsForJohnDoe = habitService.getAllUserHabits(user);
 
-        //gettingSingleUser();
 
-        //creatingAUser();
-
-        //deletingAUser();
-
-        //changingEntityFields();
-
-        //gettingAHabitCategoryByName();
-
-        //creatingAHabitCategory();
-
-        createJournalForUser();
-
-        //gettingUserJournals();
+        habitService.stopConnection();
+        userService.stopConnection();
     }
+
+    public void AddingAnEntry() {
+        EntryService entryService = new EntryService(); // start a service
+        HabitService habitService = new HabitService(); // remember that habit has a reference to a user
+        UserService userService = new UserService();
+
+        User user = userService.getUser("john_doe"); // get an existing user
+        Habit hereYouWillAddAnEntry = habitService.getUserHabitByName(user, "Running"); // existing habit
+        LocalDate someDate = LocalDate.now();
+
+
+        Entry entryAdded = entryService.addEntryToHabit(hereYouWillAddAnEntry, someDate);
+        // now you can set parameters
+        // ... habitService.setCurrentStreak(...
+        // ... habitService.updateLongestStreak(...
+        // look at -> SettingStreakParameters()
+
+        entryService.stopConnection();
+        userService.stopConnection();
+        userService.stopConnection();
+
+        //skip this
+        EntryService es = new EntryService();
+        es.deleteEntry(entryAdded);
+        es.stopConnection();
+    }
+
+    public void SettingStreakParameters() {
+        HabitService habitService = new HabitService(); // start a service
+        UserService userService = new UserService();
+
+        User user = userService.getUser("john_doe"); // existing user
+        Habit habit = habitService.getUserHabitByName(user, "Running"); // existing habit
+
+        // 1. oh, no... user forgot to complete their streak
+        habitService.setCurrentStreak(habit,0);
+        // ! !!!!!!!!!!!!! !
+        // ! HABIT SERVICE !
+        // ! !!!!!!!!!!!!! !
+
+        // 2. user performs!!!
+        habitService.setCurrentStreak(habit,habit.getCurrentStreak() + 1);
+        habitService.updateLongestStreak(habit); // it might be longer than the longest streak now
+
+
+        habitService.stopConnection();
+        userService.stopConnection();
+    }
+
+    public void GettingAllEntries() {
+        HabitService habitService = new HabitService();
+        EntryService entryService = new EntryService();
+        UserService userService = new UserService();
+        User user = userService.getUser("john_doe"); // existing user
+        Habit habit = habitService.getUserHabitByName(user, "Running"); // existing habit
+
+
+        List<Entry> entriesForThisHabit = entryService.getAllEntriesFromHabit(habit);
+
+
+        habitService.stopConnection();
+        userService.stopConnection();
+        entryService.stopConnection();
+    }
+
+    public void gettingSpecificEntryByDateAndHabit() {
+        HabitService habitService = new HabitService();
+        EntryService entryService = new EntryService();
+        UserService userService = new UserService();
+        User user = userService.getUser("john_doe"); // existing user
+        Habit habit = habitService.getUserHabitByName(user, "Running"); // existing habit
+
+        // ok so you got a user and a habit
+        // let's say that you want to get an entry specifically from 01.02.2024
+
+        LocalDate date = LocalDate.of(2024, 2, 1);
+        try {
+            Entry entry01022024 = entryService.getEntryByHabitAndDate(habit, date);
+        } catch (Exception e) {
+            System.out.println("done something");
+        }
+
+        habitService.stopConnection();
+        userService.stopConnection();
+        entryService.stopConnection();
+    }
+
+    public void settingEntryOnAndOff() {
+        HabitService habitService = new HabitService();
+        EntryService entryService = new EntryService();
+        UserService userService = new UserService();
+        User user = userService.getUser("john_doe"); // existing user
+        Habit habit = habitService.getUserHabitByName(user, "Running"); // existing habit
+
+        // let's say you got your entry. Either by getEntryByHabitAndDate(...) or by something else like clicking
+        List<Entry> entries = entryService.getAllEntriesFromHabit(habit);
+        Entry toChange = entries.getFirst();
+
+
+        entryService.changeEntryValue(toChange, false);
+
+
+        entryService.stopConnection();
+        userService.stopConnection();
+        habitService.stopConnection();
+    }
+
+
+    public void deleting() {
+        DeleterService deleterService = new DeleterService();
+
+
+        UserService userService = new UserService();
+        User toDelete = userService.getUser("john_doe"); // existing user
+
+
+
+        deleterService.deleteUser(toDelete);
+        // ! !!!!!!!!!!!!!!! !
+        // ! DELETER SERVICE !
+        // ! !!!!!!!!!!!!!!! !
+
+        deleterService.stopConnection();
+
+
+        // similar for habit and an entry
+    }
+
+
+
 
 }

@@ -11,6 +11,7 @@ module com.example.habittracker {
     requires java.transaction;
     requires java.sql;
     requires org.hibernate.orm.core;
+    requires java.xml.crypto;
     opens org.database to org.hibernate.orm.core;
 
 

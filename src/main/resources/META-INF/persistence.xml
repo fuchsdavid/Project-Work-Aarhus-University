@@ -7,11 +7,8 @@
     <persistence-unit name="default">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>org.database.Entry</class>
-        <class>org.database.Goal</class>
-        <class>org.database.Habit</class>
-        <class>org.database.HabitCategory</class>
-        <class>org.database.Journal</class>
         <class>org.database.User</class>
+        <class>org.database.Habit</class>
 
         <properties>
             <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/project"/>

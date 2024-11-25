@@ -8,54 +8,22 @@ CREATE TABLE User (
     ImageID VARCHAR(64)
 );
 
-CREATE TABLE HabitCategory (
-    /*Habit_Cat_ID INT PRIMARY KEY AUTO_INCREMENT,*/
-    Habit_Cat_Name VARCHAR(255) PRIMARY KEY,
-    Description VARCHAR(1024)
-);
 
 CREATE TABLE Habit (
-    Habit_ID INT PRIMARY KEY AUTO_INCREMENT,
-    Name VARCHAR(64) NOT NULL,
-    Description VARCHAR(1024) NOT NULL,
-    
-	Habit_Cat_Name VARCHAR(255),
-	FOREIGN KEY (Habit_Cat_Name) REFERENCES HabitCategory(Habit_Cat_Name)
-);
+    HabitID INT PRIMARY KEY AUTO_INCREMENT,
+    CurrentStreak INT NOT NULL,
+    LongestStreak INT NOT NULL,
+	HabitName VARCHAR(64) NOT NULL,
 
-CREATE TABLE User_Habit (
-	UserName VARCHAR(64),
-	Habit_ID INT,
-	FOREIGN KEY (UserName) REFERENCES User(UserName),
-    FOREIGN KEY (Habit_ID) REFERENCES Habit(Habit_ID)
-);
-
-CREATE TABLE Goal (
-	Goal_ID INT PRIMARY KEY AUTO_INCREMENT,
-	Description VARCHAR (1024),
-	Value VARCHAR (32) NOT NULL
-);
-
-CREATE TABLE Journal (
-	Journal_ID INT PRIMARY KEY AUTO_INCREMENT,
-	Current_Streak INT NOT NULL,
-	Start_Date DATE NOT NULL,
-	End_Date DATE,
-	Activity_Type VARCHAR (32) NOT NULL,
-
-	Habit_ID INT,
-	UserName VARCHAR(64),
-	Goal_ID INT,
-	FOREIGN KEY (UserName) REFERENCES User(UserName),
-	FOREIGN KEY (Habit_ID) REFERENCES Habit(Habit_ID),
-	FOREIGN KEY (Goal_ID) REFERENCES Goal(Goal_ID)
+    UserName VARCHAR(64),
+    FOREIGN KEY (UserName) REFERENCES User(UserName)
 );
 
 CREATE TABLE Entry (
-	Entry_ID INT PRIMARY KEY AUTO_INCREMENT,
-	Date DATE NOT NULL,
-	Value VARCHAR (32) NOT NULL,
-
-	Journal_ID INT,
-	FOREIGN KEY (Journal_ID) REFERENCES Journal(Journal_ID)
+	EntryID INT PRIMARY KEY AUTO_INCREMENT,
+	Date DATE,
+	Value BOOLEAN,
+    
+    HabitID INT,
+    FOREIGN KEY (HabitID) REFERENCES Habit(HabitID)
 );

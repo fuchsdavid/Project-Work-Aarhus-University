@@ -1,69 +1,72 @@
 package org.database;
-
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Habit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Habit_ID", nullable = false)
+    @Column(name = "HabitID", nullable = false)
     private Integer id;
 
-    @Column(name = "Name", nullable = false, length = 64)
-    private String name;
+    @Column(name = "HabitName", nullable = false, length = 64)
+    private String habitName;
 
-    @Column(name = "Description", nullable = false, length = 1024)
-    private String description;
+    @Column(name = "LongestStreak", nullable = false)
+    private Integer longestStreak;
+
+    @Column(name = "CurrentStreak", nullable = false)
+    private Integer currentStreak;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Habit_Cat_Name")
-    private HabitCategory habitCat;
+    @JoinColumn(name = "UserName")
+    private User user;
+
+    public Integer getId() {return this.id;}
+    public void setId(Integer id) {this.id = id;}
+
+    public Integer getLongestStreak() {return this.longestStreak;}
+    public void setLongestStreak(Integer longestStreak) {this.longestStreak = longestStreak;}
+
+    public Integer getCurrentStreak() {return this.currentStreak;}
+    public void setCurrentStreak(Integer currentStreak) {this.currentStreak = currentStreak;}
+
+    public User getUser() {return this.user;}
+    public void setUser(User user) {this.user = user;}
+
+    public String getHabitName() {return this.habitName;}
+    public void setHabitName(String habitName) {this.habitName = habitName;}
 
 
     public Habit() {};
 
-    public Habit(String name, String description, HabitCategory habitCat) {
-        setName(name);
-        setDescription(description);
-        setHabitCat(habitCat);
+    public Habit(String name, User user) {
+        this.habitName = name;
+        this.user = user;
+        this.currentStreak = 0;
+        this.longestStreak = 0;
     }
 
-    public Integer getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Habit u = (Habit) o;
+        return (Objects.equals(habitName, u.habitName) && Objects.equals(user, u.user));
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public HabitCategory getHabitCat() {
-        return habitCat;
-    }
-
-    public void setHabitCat(HabitCategory habitCat) {
-        this.habitCat = habitCat;
+    @Override
+    public int hashCode() {
+        return Objects.hash(habitName, currentStreak, longestStreak, id);
     }
 
     @Override
     public String toString() {
-        return "[HABIT " + name + " id:" + id +
-                "]\n" + "\tdescription: " + description + "\n\t" + habitCat.getName();
+        return ("[ Habit: " + this.habitName +
+                "\n\tbelongs to: " + this.user.getUserName() +
+                "\n\tlongest streak: " + this.longestStreak +
+                "\n\tcurrent streak: " + this.currentStreak +
+                "\n\tid: " + this.id +
+                "\n]");
     }
-
 }
