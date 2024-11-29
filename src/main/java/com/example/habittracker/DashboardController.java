@@ -1,6 +1,8 @@
 package com.example.habittracker;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -10,8 +12,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import org.database.Habit;
 import org.database.services.DashboardService;
+import org.database.services.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,15 +34,29 @@ public class DashboardController {
 
     private DashboardService dashboardService;
     private String currentUser; // Der Benutzername des aktuell eingeloggten Benutzers
+    Stage stage;
+    Scene scene;
+    DomainUser user;
+
+    UserService userService;
+    private void receiveData(){
+        stage = (Stage)(HabitPane.getScene().getWindow());
+        user = (DomainUser) stage.getUserData();
+        System.out.println(user.GetUserName());
+
+    }
 
     @FXML
     public void initialize() {
+        Platform.runLater(()-> {
+        receiveData();
         dashboardService = new DashboardService();
-        currentUser = "testUser"; // Beispiel, Username aus Session laden
+        currentUser = user.GetUserName();// Beispiel, Username aus Session laden
         loadHabits();
 
         // Event-Handler für den Button "+ New Habit"
         newHabitButton.setOnAction(event -> addNewHabit());
+        });
     }
 
     private void loadHabits() {
