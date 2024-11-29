@@ -8,7 +8,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -39,23 +38,23 @@ public class DashboardController {
     DomainUser user;
 
     UserService userService;
-    private void receiveData(){
-        stage = (Stage)(HabitPane.getScene().getWindow());
+
+    private void receiveData() {
+        stage = (Stage) (HabitPane.getScene().getWindow());
         user = (DomainUser) stage.getUserData();
         System.out.println(user.GetUserName());
-
     }
 
     @FXML
     public void initialize() {
-        Platform.runLater(()-> {
-        receiveData();
-        dashboardService = new DashboardService();
-        currentUser = user.GetUserName();// Beispiel, Username aus Session laden
-        loadHabits();
+        Platform.runLater(() -> {
+            receiveData();
+            dashboardService = new DashboardService();
+            currentUser = user.GetUserName(); // Benutzername aus Session laden
+            loadHabits();
 
-        // Event-Handler für den Button "+ New Habit"
-        newHabitButton.setOnAction(event -> addNewHabit());
+            // Event-Handler für den Button "+ New Habit"
+            newHabitButton.setOnAction(event -> addNewHabit());
         });
     }
 
@@ -100,7 +99,7 @@ public class DashboardController {
         HabitPane.getChildren().add(habitContainer);
 
         HBox circlesRow = new HBox();
-        circlesRow.setSpacing(20);
+        circlesRow.setSpacing(20); // Abstand zwischen den Kreisen in der Reihe
 
         final int[] currentStreak = {habit.getCurrentStreak()};
         final int[] longestStreak = {habit.getLongestStreak()};
@@ -125,11 +124,19 @@ public class DashboardController {
             Optional<ButtonType> result = alert.showAndWait();
 
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                dashboardService.deleteHabit(habit.getId());
-                HabitPane.getChildren().remove(habitContainer);
-                CirclePane.getChildren().remove(circlesRow);
+                // Habit aus der SQL-Datenbank löschen
+                boolean isDeleted = dashboardService.deleteHabit(habit.getId());
+                if (isDeleted) {
+                    // Entferne das Habit aus der Benutzeroberfläche
+                    HabitPane.getChildren().remove(habitContainer);
+                    CirclePane.getChildren().remove(circlesRow);
+                    System.out.println("Habit successfully deleted: " + habit.getHabitName());
+                } else {
+                    System.err.println("Failed to delete habit from database: " + habit.getHabitName());
+                }
             }
         });
+
 
         for (int i = 0; i < 7; i++) {
             Circle circle = new Circle(10);
@@ -157,6 +164,10 @@ public class DashboardController {
         }
 
         circlesRow.getChildren().addAll(streakCountText, removeButton);
+
+        // Erhöhe den Abstand zwischen den Reihen
+        CirclePane.setSpacing(35); // Abstand zwischen den Reihen im CirclePane (VBox)
+
         CirclePane.getChildren().add(circlesRow);
     }
 }

@@ -51,16 +51,21 @@ public class DashboardService {
 
 
     // Löscht einen Habit anhand seiner ID
-    public void deleteHabit(int habitId) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "DELETE FROM habit WHERE HabitID = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, habitId);
-            statement.executeUpdate();
+    public boolean deleteHabit(int habitId) {
+        String deleteQuery = "DELETE FROM habit WHERE HabitID = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
+
+            preparedStatement.setInt(1, habitId);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0; // Rückgabe true, wenn mindestens eine Zeile gelöscht wurde
+
         } catch (SQLException e) {
             e.printStackTrace();
+            return false; // Rückgabe false bei einem Fehler
         }
     }
+
 
     // Aktualisiert den aktuellen Streak eines Habits
     public void updateHabitStreak(int habitId, int currentStreak, int longestStreak) {
