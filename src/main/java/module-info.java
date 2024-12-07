@@ -15,6 +15,15 @@ module com.example.habittracker {
     opens org.database to org.hibernate.orm.core;
 
 
+    requires google.api.client;
+    requires com.google.api.client.auth;
+    requires com.google.api.client;
+    requires com.google.api.client.json.gson;
+    requires google.api.services.calendar.v3.rev411;
+    requires com.google.api.client.extensions.jetty.auth;
+    requires com.google.api.client.extensions.java6.auth;
+    requires jdk.httpserver;
+
     opens com.example.habittracker to javafx.fxml;
     exports com.example.habittracker;
 }
