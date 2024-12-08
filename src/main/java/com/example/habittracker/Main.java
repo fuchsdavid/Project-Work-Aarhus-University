@@ -14,6 +14,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         // Lade das Dashboard FXML-Layout
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("HabitDetails.fxml")); // Stelle sicher, dass der Name korrekt ist
         Parent root = loader.load();
 

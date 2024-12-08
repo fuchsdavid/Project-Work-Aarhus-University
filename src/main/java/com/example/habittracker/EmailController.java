@@ -5,7 +5,10 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import org.database.Main;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.PasswordAuthentication;
 import java.util.Properties;
 
@@ -18,15 +21,31 @@ public class EmailController {
         prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.ssl.trust", "smtp.wp.pl");
 
-        // Session creation with authentication
-        Session session = Session.getInstance(prop, new Authenticator() {
-            @Override
-            protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
-                return new jakarta.mail.PasswordAuthentication("habittracker123@wp.pl", "Nimad4321");
-            }
-        });
+        //properties
 
-        try {
+        Properties loginProp = new Properties();
+
+        try (InputStream input = EmailController.class.getClassLoader().getResourceAsStream("secrets.properties")) {
+            if (input == null) {
+                System.out.println("Sorry, unable to find secrets.properties");
+                return;
+            }
+            loginProp.load(input);
+
+            String login = loginProp.getProperty("LOGIN");
+            String password = loginProp.getProperty("PASSWORD");
+            System.out.println(login);
+            System.out.println(password);
+            //end of properties
+
+            // Session creation with authentication
+            Session session = Session.getInstance(prop, new Authenticator() {
+                @Override
+                protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
+                    return new jakarta.mail.PasswordAuthentication(login, password);
+                }
+            });
+
             // Create a new email message
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("habittracker123@wp.pl"));
@@ -52,8 +71,8 @@ public class EmailController {
             Transport.send(message);
             System.out.println("Email sent successfully!");
 
-        } catch (MessagingException e) {
-            e.printStackTrace();  // This provides a more detailed error message
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
