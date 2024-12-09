@@ -1,5 +1,6 @@
 package com.example.habittracker;
 
+import com.example.habittracker.utils.DomainUser;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -21,17 +22,17 @@ import java.util.Optional;
 
 public class DashboardController {
     @FXML
-    private Button newHabitButton;
+    Button newHabitButton;
 
     @FXML
-    private VBox HabitPane; // Pane für die Habits
+    VBox HabitPane; // Pane für die Habits
     @FXML
-    private VBox CirclePane; // Pane für die Streak-Kreise
+    VBox CirclePane; // Pane für die Streak-Kreise
 
     private final Color circleColor = Color.web("#3A51CA");
     private final Color defaultColor = Color.WHITE;
 
-    private DashboardService dashboardService;
+    DashboardService dashboardService;
     private String currentUser; // Der Benutzername des aktuell eingeloggten Benutzers
     Stage stage;
     Scene scene;
@@ -42,7 +43,14 @@ public class DashboardController {
     private void receiveData() {
         stage = (Stage) (HabitPane.getScene().getWindow());
         user = (DomainUser) stage.getUserData();
+
+        // Check if user is null (for testing purposes)
+        if (user == null) {
+            user = new DomainUser("test");
+        }
+
         System.out.println(user.GetUserName());
+
     }
 
     @FXML
@@ -83,7 +91,7 @@ public class DashboardController {
         });
     }
 
-    private void addHabitToPane(Habit habit) {
+    void addHabitToPane(Habit habit) {
         VBox habitContainer = new VBox();
         habitContainer.setSpacing(5);
 
@@ -136,7 +144,6 @@ public class DashboardController {
                 }
             }
         });
-
 
         for (int i = 0; i < 7; i++) {
             Circle circle = new Circle(10);

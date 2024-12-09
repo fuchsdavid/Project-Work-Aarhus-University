@@ -15,29 +15,39 @@ import org.database.services.UserService;
 
 import javax.persistence.EntityExistsException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.regex.PatternSyntaxException;
 
 public class CreateAccountController {
     @FXML
-    private TextField name;
+    TextField name;
     @FXML
-    private TextField surname;
+    TextField surname;
     @FXML
-    private TextField age;
+    TextField age;
     @FXML
-    private TextField login;
+    TextField login;
     @FXML
-    private TextField email;
+    TextField email;
     @FXML
-    private PasswordField password;
+    PasswordField password;
     @FXML
-    private PasswordField repeatPassword;
+    PasswordField repeatPassword;
     @FXML
-    private Label feedback;
+    Label feedback;
     enum ErrorCode{NO_ERROR, PASSWORD, REPEAT_PASSWORD, EMAIL, EMPTY_FIELD, EMAIL_TAKEN, USERNAME_TAKEN, AGE}
     private Stage stage;
     private Scene scene;
     public Parent parent;
+
+    public Scene getScene() throws IOException {
+        if(scene == null){
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("create-account-view.fxml")));
+            scene = new Scene(root);
+        }
+        return scene;
+    }
+
     @FXML
     protected void onRegisterButtonClick() {
         processRegisterForm();
@@ -53,7 +63,7 @@ public class CreateAccountController {
         repeatPassword.setText("");
     }
 
-    private void processRegisterForm(){
+    void processRegisterForm(){
         ErrorCode result = validateRegisterForm();
         if(result == ErrorCode.EMPTY_FIELD){
             feedback.setText("All fields are required");
@@ -88,7 +98,7 @@ public class CreateAccountController {
             switchToLoginView();
         }
     }
-    private ErrorCode validateRegisterForm(){
+    ErrorCode validateRegisterForm(){
         TextField[] allFields = {name,login,email,password,repeatPassword, surname, age};
         for (TextField field : allFields) {
             if (field.getText().equals("")) {
@@ -122,7 +132,7 @@ public class CreateAccountController {
         return ErrorCode.NO_ERROR;
 
     }
-    private Boolean checkIfUserNameTaken(String username){
+    Boolean checkIfUserNameTaken(String username){
         //checks if the username is already in the database
         UserService userService = new UserService();
 
@@ -134,7 +144,7 @@ public class CreateAccountController {
         }
         return true;
     }
-    private Boolean checkIfEmailTaken(String email){
+    Boolean checkIfEmailTaken(String email){
         //checks if email is already in the database
         UserService userService = new UserService();
 

@@ -13,13 +13,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        // Lade das Dashboard FXML-Layout
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("HabitDetails.fxml")); // Stelle sicher, dass der Name korrekt ist
-        Parent root = loader.load();
-
-        // Setze die Szene
-        Scene scene = new Scene(root, 600, 400);
-        primaryStage.setTitle("Circle Color Changer");
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        primaryStage.setTitle("Habit tracker");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
