@@ -1,4 +1,4 @@
-package com.example.habittracker;
+package com.example.habittracker.utils;
 
 import org.database.User;
 

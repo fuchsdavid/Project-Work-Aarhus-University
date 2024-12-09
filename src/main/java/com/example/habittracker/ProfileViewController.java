@@ -1,5 +1,6 @@
 package com.example.habittracker;
 
+import com.example.habittracker.utils.DomainUser;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,60 +16,54 @@ import javafx.stage.Stage;
 import org.database.User;
 import org.database.services.UserService;
 
-
 import java.io.*;
-import java.lang.reflect.Method;
-import java.util.function.Consumer;
-import java.util.function.DoubleConsumer;
-import java.util.function.IntConsumer;
-
 
 public class ProfileViewController {
     @FXML
     private Button changeProfilePictureButton;
 
     @FXML
-    private ImageView profilePictureImageView;
+    ImageView profilePictureImageView;
 
     @FXML
-    private Button editName;
+    Button editName;
 
     @FXML
-    private Button editSurame;
+    Button editSurame;
 
     @FXML
-    private Button okName;
+    Button okName;
 
     @FXML
-    private Button okEmail;
+    Button okEmail;
 
     @FXML
-    private Button okSurname;
+    Button okSurname;
 
     @FXML
-    private Button editEmail;
+    Button editEmail;
 
     @FXML
-    private TextField newName;
+    TextField newName;
 
     @FXML
-    private TextField newEmail;
+    TextField newEmail;
 
     @FXML
-    private TextField newSurname;
+    TextField newSurname;
 
     @FXML
-    private Label nameLabel;
+    Label nameLabel;
 
     @FXML
-    private Label emailLabel;
+    Label emailLabel;
 
     @FXML
-    private Label surnameLabel;
+    Label surnameLabel;
     @FXML
-    private Label usernameLabel;
+    Label usernameLabel;
     @FXML
-    private Label ageLabel;
+    Label ageLabel;
 
     Stage stage;
     Scene scene;
@@ -80,14 +75,14 @@ public class ProfileViewController {
     interface UserStringFunction {
         void apply(User user, String x);
     }
+
     public void initialize() {
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
             receiveData();
             userService = new UserService();
             try {
                 User userDB = getUserFromDatabase();
                 fillInUserData(userDB);
-
             } catch (Exception e) {
                 userService.stopConnection();
                 return;
@@ -95,17 +90,17 @@ public class ProfileViewController {
             userService.stopConnection();
         });
     }
-    private void receiveData(){
-        stage = (Stage)(editName.getScene().getWindow());
+
+    private void receiveData() {
+        stage = (Stage) (editName.getScene().getWindow());
         user = (DomainUser) stage.getUserData();
-
     }
 
-    private User getUserFromDatabase() throws Exception{
-        User userDB = userService.getUser(user.GetUserName()); // get a user by it's username
-        return userDB;
+    private User getUserFromDatabase() throws Exception {
+        return userService.getUser(user.GetUserName());
     }
-    private void fillInUserData(User userDB){
+
+    private void fillInUserData(User userDB) {
         usernameLabel.setText(userDB.getUserName());
         emailLabel.setText(userDB.getEmail());
         surnameLabel.setText(userDB.getSurname());
@@ -114,50 +109,40 @@ public class ProfileViewController {
         fillInProfilePicture(userDB.getImageID());
     }
 
-    private void fillInProfilePicture(String imageID){
-        if(imageID == null){
+    private void fillInProfilePicture(String imageID) {
+        if (imageID == null) {
             System.out.println("Image ID is null");
             setDefaultProfilePicture();
-        }
-        else{
+        } else {
             setProfilePicture(imageID);
         }
     }
 
-
-    private void setDefaultProfilePicture(){
+    private void setDefaultProfilePicture() {
         String defaultPath = "profile-pictures/default.png";
         setProfilePicture(defaultPath);
     }
 
-    public void setProfilePicture(String path){
-
-        //String picture = "profile-pictures/"+openFileChooser();
-        //System.out.println("Here: + " + picture);
+    public void setProfilePicture(String path) {
         InputStream input = getClass().getResourceAsStream(path);
         Image image = null;
 
-        if(input != null){
+        if (input != null) {
             image = new Image(input);
-            System.out.println("null1");
         }
 
-        if(path != "profile_pictures/" && image != null){
-            System.out.println("null1");
+        if (!path.equals("profile_pictures/") && image != null) {
             profilePictureImageView.setImage(image);
         }
     }
 
-    public void changeProfilePicture(){
-        String picture = "profile-pictures/"+openFileChooser();
+    public void changeProfilePicture() {
+        String picture = "profile-pictures/" + openFileChooser();
         updateProfilePictureInDatabase(picture);
         this.initialize();
-        //setProfilePicture(picture);
-
     }
 
-
-    private void updateProfilePictureInDatabase(String newImageID){
+    private void updateProfilePictureInDatabase(String newImageID) {
         userService = new UserService();
         try {
             User userDB = getUserFromDatabase();
@@ -169,11 +154,11 @@ public class ProfileViewController {
         userService.stopConnection();
     }
 
-    public String openFileChooser(){
+    public String openFileChooser() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
         File newPicture = chooser.showOpenDialog(changeProfilePictureButton.getScene().getWindow());
-        if(newPicture != null){
+        if (newPicture != null) {
             File targetLocation = new File("src/main/resources/com/example/habittracker/profile-pictures", newPicture.getName());
             try (FileInputStream fis = new FileInputStream(newPicture);
                  FileOutputStream fos = new FileOutputStream(targetLocation)) {
@@ -195,42 +180,47 @@ public class ProfileViewController {
         }
         return "";
     }
-    public void switchToDashBoardView(){
+
+    public void switchToDashBoardView() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("Dashboard-view.fxml"));
             stage = (Stage) profilePictureImageView.getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public void onEditNameClicked(){
+
+    public void onEditNameClicked() {
         onEditClicked(nameLabel, newName, editName, okName);
     }
-    public void onSaveNameClicked(){
-        String newData = onSaveClicked(nameLabel,  newName, editName, okName);
-        updateDatabase(newData, (u, d) -> {userService.updateName(u, d);});
+
+    public void onSaveNameClicked() {
+        String newData = onSaveClicked(nameLabel, newName, editName, okName);
+        updateDatabase(newData, (u, d) -> userService.updateName(u, d));
     }
 
-    public void onEditEmailClicked(){
+    public void onEditEmailClicked() {
         onEditClicked(emailLabel, newEmail, editEmail, okEmail);
     }
-    public void onSaveEmailClicked(){
+
+    public void onSaveEmailClicked() {
         String newData = onSaveClicked(emailLabel, newEmail, editEmail, okEmail);
-        updateDatabase(newData, (u, d) -> {userService.updateEmail(u, d);});
+        updateDatabase(newData, (u, d) -> userService.updateEmail(u, d));
     }
-    public void onEditSurnameClicked(){
+
+    public void onEditSurnameClicked() {
         onEditClicked(surnameLabel, newSurname, editSurame, okSurname);
     }
-    public void onSaveSurnameClicked(){
+
+    public void onSaveSurnameClicked() {
         String newData = onSaveClicked(surnameLabel, newSurname, editSurame, okSurname);
-        updateDatabase(newData, (u, d) -> {userService.updateSurname(u, d);});
+        updateDatabase(newData, (u, d) -> userService.updateSurname(u, d));
     }
-    //168->
-    private String onSaveClicked(Label label, TextField newData, Button editButton, Button okButton){
+
+    private String onSaveClicked(Label label, TextField newData, Button editButton, Button okButton) {
         String updatedData = newData.getText();
         label.setText(updatedData);
         label.setVisible(true);
@@ -239,7 +229,8 @@ public class ProfileViewController {
         okButton.setVisible(false);
         return updatedData;
     }
-    private void onEditClicked(Label label, TextField newData, Button editButton, Button okButton){
+
+    private void onEditClicked(Label label, TextField newData, Button editButton, Button okButton) {
         label.setText("  ");
         label.setVisible(false);
         newData.clear();
@@ -247,7 +238,8 @@ public class ProfileViewController {
         editButton.setVisible(false);
         okButton.setVisible(true);
     }
-    private void updateDatabase(String newData, UserStringFunction action){
+
+    private void updateDatabase(String newData, UserStringFunction action) {
         userService = new UserService();
         User userDB = userService.getUser(user.GetUserName());
         action.apply(userDB, newData);

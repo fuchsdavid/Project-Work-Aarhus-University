@@ -1,8 +1,7 @@
 package org.database.services;
 
-import com.example.habittracker.DatabaseConnection;
+import com.example.habittracker.utils.DatabaseConnection;
 import org.database.Habit;
-import org.database.User;
 
 import java.sql.*;
 import java.util.ArrayList;
