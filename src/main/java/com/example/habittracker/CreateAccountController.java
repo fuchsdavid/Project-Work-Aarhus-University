@@ -94,7 +94,7 @@ public class CreateAccountController {
             catch (Exception e){
                 feedback.setText("Something went wrong");
             }
-            //EmailController.sendWelcomeEmail(email.getText(), name.getText());    //uncomment!
+            EmailController.sendWelcomeEmail(email.getText(), name.getText());    //uncomment!
             switchToLoginView();
         }
     }
