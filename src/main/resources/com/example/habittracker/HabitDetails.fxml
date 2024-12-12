@@ -56,7 +56,6 @@
 
     <!-- Action Buttons -->
     <HBox alignment="CENTER" spacing="10">
-        <Button fx:id="deleteButton" onAction="#handleDelete" style="-fx-text-fill: red;" text="Delete" />
         <Button fx:id="syncButton" onAction="#handleSync" text="Sync with Google Calendar" />
     </HBox>
 

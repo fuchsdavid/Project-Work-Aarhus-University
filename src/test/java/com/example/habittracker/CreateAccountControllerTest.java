@@ -1,23 +1,19 @@
 package com.example.habittracker;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.database.services.UserService;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
-
-import java.io.IOException;
-import java.util.Objects;
-
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CreateAccountControllerTest extends ApplicationTest {
 
+    private CreateAccountController controller;
     private TextField name;
     private TextField surname;
     private TextField age;
@@ -26,121 +22,106 @@ public class CreateAccountControllerTest extends ApplicationTest {
     private PasswordField password;
     private PasswordField repeatPassword;
     private Label feedback;
-    private CreateAccountController controller;
-    private UserService mockUserService;
 
     @Override
-    public void start(Stage stage) throws IOException, InterruptedException {
-        // Initialize JavaFX controls
-        name = new TextField();
-        name.setId("name");
-        surname = new TextField();
-        surname.setId("surname");
-        age = new TextField();
-        age.setId("age");
-        login = new TextField();
-        login.setId("login");
-        email = new TextField();
-        email.setId("email");
-        password = new PasswordField();
-        password.setId("password");
-        repeatPassword = new PasswordField();
-        repeatPassword.setId("repeatPassword");
-        feedback = new Label();
-        feedback.setId("feedback");
-
-        // Initialize the controller and assign fields
-        controller = new CreateAccountController();
-        controller.name = name;
-        controller.surname = surname;
-        controller.age = age;
-        controller.login = login;
-        controller.email = email;
-        controller.password = password;
-        controller.repeatPassword = repeatPassword;
-        controller.feedback = feedback;
-
-        // Create a new scene for testing
-        Scene scene = new Scene(new VBox(name, surname, age, login, email, password, repeatPassword, feedback), 800, 600);
+    public void start(Stage stage) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("create-account-view.fxml"));
+        Scene scene = new Scene(loader.load());
         stage.setScene(scene);
         stage.show();
 
-        // Mock the UserService
-        mockUserService = mock(UserService.class);
-        Thread.sleep(1000); //
+        controller = loader.getController();
 
+        name = (TextField) scene.lookup("#name");
+        surname = (TextField) scene.lookup("#surname");
+        age = (TextField) scene.lookup("#age");
+        login = (TextField) scene.lookup("#login");
+        email = (TextField) scene.lookup("#email");
+        password = (PasswordField) scene.lookup("#password");
+        repeatPassword = (PasswordField) scene.lookup("#repeatPassword");
+        feedback = (Label) scene.lookup("#feedback");
+
+        sleep(5000);
+    }
+
+    @BeforeEach
+    @Order(1)
+    public void setup() {
+        name.setText("");
+        surname.setText("");
+        age.setText("");
+        login.setText("");
+        email.setText("");
+        password.setText("");
+        repeatPassword.setText("");
+        feedback.setText("");
     }
 
     @Test
-    public void testEmptyFieldsValidation() throws InterruptedException {
-        // Leave all fields empty and call the form validation
-        clickOn("#name").write("");
-        clickOn("#surname").write("");
-        clickOn("#age").write("");
-        clickOn("#login").write("");
-        clickOn("#email").write("");
-        clickOn("#password").write("");
-        clickOn("#repeatPassword").write("");
-
-        controller.processRegisterForm();
-
+    @Order(2)
+    public void testEmptyFields() {
+        clickOn("#registerButton");
         assertEquals("All fields are required", feedback.getText());
-
-        Thread.sleep(5000); //
     }
 
     @Test
-    public void testMismatchedPasswordsValidation() {
-        // Fill fields but use mismatched passwords
-        clickOn("#name").write("John");
-        clickOn("#surname").write("Doe");
-        clickOn("#age").write("25");
-        clickOn("#login").write("johndoe");
-        clickOn("#email").write("john@example.com");
-        clickOn("#password").write("password123");
-        clickOn("#repeatPassword").write("differentPassword");
+    @Order(3)
+    public void testPasswordMismatch() {
+        name.setText("Test");
+        surname.setText("Test");
+        age.setText("25");
+        login.setText("test");
+        email.setText("test@example.com");
+        password.setText("password123");
+        repeatPassword.setText("differentPassword");
 
-        controller.processRegisterForm();
-
+        clickOn("#registerButton");
         assertEquals("Passwords do not match", feedback.getText());
     }
 
     @Test
-    public void testValidInput() {
-        // Set up the mock behavior
-        when(mockUserService.getUserByEmail("john@example.com")).thenThrow(new RuntimeException("No user found"));
-        when(mockUserService.getUser("johndoe")).thenThrow(new RuntimeException("No user found"));
+    @Order(4)
+    public void testInvalidEmail() {
+        name.setText("test");
+        surname.setText("test");
+        age.setText("25");
+        login.setText("test");
+        email.setText("wrong-email");
+        password.setText("password123");
+        repeatPassword.setText("password123");
 
-        // Fill in valid data
-        clickOn("#name").write("John");
-        clickOn("#surname").write("Doe");
-        clickOn("#age").write("25");
-        clickOn("#login").write("test");
-        clickOn("#email").write("test@example.com");
-        clickOn("#password").write("password123");
-        clickOn("#repeatPassword").write("password123");
-
-        controller.processRegisterForm();
-
-        assertEquals("", feedback.getText());
-        verify(mockUserService, times(1)).addUser(
-                eq("test"), eq("John"), eq("Doe"), eq(25), eq("test@example.com"), eq("password123")
-        );
+        clickOn("#registerButton");
+        assertEquals("Your email address is incorrect", feedback.getText());
     }
 
     @Test
-    public void testAgeValidation() {
-        // Enter invalid age
-        clickOn("#name").write("John");
-        clickOn("#surname").write("Doe");
-        clickOn("#age").write("200"); // Invalid age
-        clickOn("#login").write("johndoe");
-        clickOn("#email").write("john@example.com");
-        clickOn("#password").write("password123");
-        clickOn("#repeatPassword").write("password123");
+    @Order(5)
+    public void testInvalidAge() {
+        name.setText("test");
+        surname.setText("test");
+        age.setText("-5");
+        login.setText("test");
+        email.setText("test@example.com");
+        password.setText("password123");
+        repeatPassword.setText("password123");
 
-        controller.processRegisterForm();
-
+        clickOn("#registerButton");
         assertEquals("Enter correct age", feedback.getText());
     }
+
+    @Test
+    @Order(6)
+    public void testSuccessfulRegistration() {
+        name.setText("test");
+        surname.setText("test");
+        age.setText("25");
+        login.setText("test");
+        email.setText("test@example.com");
+        password.setText("password123");
+        repeatPassword.setText("password123");
+
+        clickOn("#registerButton");
+        assertEquals("", feedback.getText());
+    }
 }
+

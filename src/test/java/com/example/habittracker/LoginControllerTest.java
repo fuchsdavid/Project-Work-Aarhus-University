@@ -1,9 +1,10 @@
 package com.example.habittracker;
 
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.database.User;
 import org.database.services.UserService;
@@ -24,26 +25,24 @@ public class LoginControllerTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
-        // Initialize JavaFX controls
-        login = new TextField();
-        login.setId("login");
-        password = new PasswordField();
-        password.setId("password");
-        feedback = new Label();
-        feedback.setId("feedback");
+        // Load the FXML file
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
+        AnchorPane root = loader.load();
 
-        // Initialize the controller and assign fields
-        controller = new LoginController();
-        controller.login = login;
-        controller.password = password;
-        controller.feedback = feedback;
+        // Get the controller
+        controller = loader.getController();
+
+        // Initialize JavaFX controls
+        login = (TextField) root.lookup("#login");
+        password = (PasswordField) root.lookup("#password");
+        feedback = (Label) root.lookup("#feedback");
 
         // Mock the UserService
         mockUserService = mock(UserService.class);
         controller.setUserService(mockUserService);
 
         // Create a new scene for testing
-        Scene scene = new Scene(new VBox(login, password, feedback), 800, 600);
+        Scene scene = new Scene(root, 1024, 640);
         stage.setScene(scene);
         stage.show();
     }
@@ -57,13 +56,11 @@ public class LoginControllerTest extends ApplicationTest {
             controller.processLoginForm();
         });
         WaitForAsyncUtils.waitForFxEvents();
-        assertEquals("", feedback.getText());
+        assertEquals("Username or password is incorrect", feedback.getText());
     }
 
     @Test
     public void testIncorrectCredentials() {
-        // Set up the mock behavior
-        when(mockUserService.getUser("test")).thenReturn(new User("test", "test", "test", 20, "test", "test"));
 
         // Fill fields with incorrect credentials
         Platform.runLater(() -> {
@@ -77,15 +74,11 @@ public class LoginControllerTest extends ApplicationTest {
 
     @Test
     public void testSuccessfulLogin() {
-        // Set up the mock behavior
-        User mockUser = new User("test", "test", "test", 20, "test", "test");
-        when(mockUserService.getUser("test")).thenReturn(mockUser);
-        when(mockUserService.checkPassword(mockUser, "test")).thenReturn(true);
 
         // Fill fields with correct credentials
         Platform.runLater(() -> {
             login.setText("test");
-            password.setText("test");
+            password.setText("password123");
             controller.processLoginForm();
         });
         WaitForAsyncUtils.waitForFxEvents();

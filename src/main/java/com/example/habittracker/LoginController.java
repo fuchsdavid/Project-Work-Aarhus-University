@@ -84,6 +84,7 @@ public class LoginController {
 
     private boolean checkInDatabase() {
         User user = null;
+        userService = new UserService();
         try {
             user = userService.getUser(login.getText());
         } catch (Exception e) {
