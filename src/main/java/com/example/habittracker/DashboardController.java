@@ -69,7 +69,7 @@ public class DashboardController {
         });
     }
 
-    private void loadHabits() {
+    void loadHabits() {
         List<Habit> habits = dashboardService.getUserHabits(currentUser);
 
         for (Habit habit : habits) {
@@ -77,7 +77,7 @@ public class DashboardController {
         }
     }
 
-    private void addNewHabit() {
+    void addNewHabit() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Add a new Habit");
         dialog.setHeaderText(null);
