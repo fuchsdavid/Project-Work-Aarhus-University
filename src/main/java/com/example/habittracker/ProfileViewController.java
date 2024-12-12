@@ -94,6 +94,11 @@ public class ProfileViewController {
     private void receiveData() {
         stage = (Stage) (editName.getScene().getWindow());
         user = (DomainUser) stage.getUserData();
+
+        // for testing purposes
+        if (user == null) {
+            user = new DomainUser("test");
+        }
     }
 
     private User getUserFromDatabase() throws Exception {

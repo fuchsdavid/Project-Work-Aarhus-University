@@ -1,4 +1,4 @@
-package com.example.habittracker;
+package com.example.habittracker.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

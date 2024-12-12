@@ -1,5 +1,6 @@
 package com.example.habittracker;
 
+import com.example.habittracker.utils.EmailController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;

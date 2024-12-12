@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.habittracker.DashboardController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.habittracker.DashboardController">
    <children>
       <BorderPane prefHeight="400.0" prefWidth="600.0">
          <left>
@@ -158,7 +158,7 @@
                         </Text>
                      </children>
                   </GridPane>
-                  <VBox fx:id="CirclePane" layoutX="26.0" layoutY="94.0" prefHeight="246.0" prefWidth="305.0" />
+                  <VBox fx:id="CirclePane" layoutX="26.0" layoutY="94.0" prefHeight="246.0" />
                </children>
             </Pane>
          </center>

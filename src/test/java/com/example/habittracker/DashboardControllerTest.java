@@ -1,119 +1,83 @@
 package com.example.habittracker;
 
+import com.example.habittracker.utils.DomainUser;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.database.Habit;
-import org.database.User;
-import org.database.services.DashboardService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
+import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static java.lang.Thread.sleep;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-@ExtendWith(ApplicationExtension.class)
-public class DashboardControllerTest {
+public class DashboardControllerTest extends ApplicationTest {
 
     private DashboardController controller;
-    private DashboardService mockDashboardService;
-    private Stage stage;
+    private VBox habitPane, circlePane;
+    private Button newHabitButton;
 
-    private User user;
-
-    @Start
+    @Override
     public void start(Stage stage) throws Exception {
-        // Mock the DashboardService
-        mockDashboardService = mock(DashboardService.class);
+        // Load the FXML file
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard-view.fxml"));
+        Parent root = loader.load();
 
-        // Create an instance of DashboardController
-        controller = new DashboardController();
-        controller.dashboardService = mockDashboardService;
+        // Get the controller
+        controller = loader.getController();
 
-        // Initialize the stage and scene
-        VBox root = new VBox();
-        VBox habitPane = new VBox();
-        VBox circlePane = new VBox();
-        Button newHabitButton = new Button("+ New Habit");
+        // Initialize JavaFX controls
+        habitPane = (VBox) root.lookup("#HabitPane");
+        circlePane = (VBox) root.lookup("#CirclePane");
+        newHabitButton = (Button) root.lookup("#newHabitButton");
 
-        user = new User("test", "test", "test", 18, "test", "test");
-
-        controller.HabitPane = habitPane;
-        controller.CirclePane = circlePane;
-        controller.newHabitButton = newHabitButton;
-
-        root.getChildren().addAll(habitPane, circlePane, newHabitButton);
-
-        stage.setScene(new javafx.scene.Scene(root, 600, 400));
+        // Create a new scene for testing
+        Scene scene = new Scene(root, 600, 400);
+        stage.setScene(scene);
         stage.show();
-
-        sleep(500);
     }
 
     @Test
-    public void testLoadHabits(FxRobot robot) {
-        // Mock habits returned by the service
-        Habit mockHabit = new Habit("Test Habit", user);
-        when(mockDashboardService.getUserHabits(Mockito.anyString()))
-                .thenReturn(Collections.singletonList(mockHabit));
-
-        // Simulate initialization
-        robot.interact(controller::initialize);
-
-
-    }
-
-    @Test
-    public void testAddNewHabit(FxRobot robot) {
-        // Simulate the dialog returning a habit name
-        doAnswer(invocation -> {
-            String habitName = invocation.getArgument(0);
-            return new Habit(habitName, new User());
-        }).when(mockDashboardService).addHabit(Mockito.anyString(), Mockito.anyString());
-
-        // Interact with the new habit button
-        robot.clickOn(controller.newHabitButton);
-
-        // Simulate dialog input
-        robot.write("New Test Habit");
-        robot.press(javafx.scene.input.KeyCode.ENTER).release(javafx.scene.input.KeyCode.ENTER);
-
-
-    }
-
-    @Test
-    public void testDeleteHabit(FxRobot robot) {
-        // Create a dummy habit
-        Habit mockHabit = new Habit("Habit To Delete", user);
-        when(mockDashboardService.deleteHabit(Mockito.anyInt())).thenReturn(true);
-
-        // Add the habit to the pane
-        Platform.runLater(() -> controller.addHabitToPane(mockHabit));
-        WaitForAsyncUtils.waitForFxEvents();
-
-        // Ensure the remove button is correctly added and has the correct id
+    public void testInitialize() {
+        // Simulate receiving data
         Platform.runLater(() -> {
-            VBox habitBox = (VBox) controller.HabitPane.getChildren().get(0);
-            Button removeButton = new Button("Remove");
-            removeButton.setId("removeButton");
-            habitBox.getChildren().add(removeButton);
+            controller.initialize();
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        // Simulate clicking the delete button
-        robot.clickOn("#removeButton");
+        // Verify the initial state
+        assertNotNull(habitPane);
+        assertNotNull(circlePane);
+        assertNotNull(newHabitButton);
+    }
+
+    @Test
+    public void testAddNewHabit() {
+        // Simulate adding a new habit
+        Platform.runLater(() -> {
+            controller.initialize();
+            controller.addNewHabit();
+        });
         WaitForAsyncUtils.waitForFxEvents();
 
+        // Verify the new habit is added to the pane
+        assertFalse(habitPane.getChildren().isEmpty());
+    }
 
+    @Test
+    public void testLoadHabits() {
+        // Simulate loading habits
+        Platform.runLater(() -> {
+            controller.initialize();
+            controller.loadHabits();
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // Verify the habits are loaded into the pane
+        assertFalse(habitPane.getChildren().isEmpty());
     }
 }

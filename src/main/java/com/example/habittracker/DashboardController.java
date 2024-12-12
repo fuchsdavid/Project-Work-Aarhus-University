@@ -3,6 +3,8 @@ package com.example.habittracker;
 import com.example.habittracker.utils.DomainUser;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -17,6 +19,7 @@ import org.database.Habit;
 import org.database.services.DashboardService;
 import org.database.services.UserService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,6 +120,69 @@ public class DashboardController {
         streakCountText.setFont(Font.font("System", FontWeight.BOLD, 14));
         streakCountText.setFill(Color.web("#22369F"));
 
+        Button removeButton = getRemoveButton(habit, habitContainer, circlesRow);
+        Button viewDetailsButton = getViewDetailsButton(habit);
+
+        for (int i = 0; i < 7; i++) {
+            Circle circle = new Circle(10);
+            circle.setFill(defaultColor);
+
+            int finalI = i;
+            circle.setOnMouseClicked(event -> {
+                if (!circleClicked[finalI]) {
+                    circle.setFill(circleColor);
+                    circleClicked[finalI] = true;
+                    currentStreak[0]++;
+                    if (currentStreak[0] > longestStreak[0]) {
+                        longestStreak[0] = currentStreak[0];
+                    }
+                } else {
+                    circle.setFill(defaultColor);
+                    circleClicked[finalI] = false;
+                    currentStreak[0]--;
+                }
+                streakCountText.setText(String.valueOf(currentStreak[0]));
+                dashboardService.updateHabitStreak(habit.getId(), currentStreak[0], longestStreak[0]);
+            });
+
+            circlesRow.getChildren().add(circle);
+        }
+
+        circlesRow.getChildren().addAll(streakCountText, removeButton, viewDetailsButton);
+
+        // Erhöhe den Abstand zwischen den Reihen
+        CirclePane.setSpacing(35); // Abstand zwischen den Reihen im CirclePane (VBox)
+
+        CirclePane.getChildren().add(circlesRow);
+    }
+
+    private Button getViewDetailsButton(Habit habit) {
+        Button viewDetailsButton = new Button("View Details");
+        viewDetailsButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #22369f; -fx-font-size: 10; -fx-padding: 0;");
+
+        viewDetailsButton.setOnAction(event -> {
+            try {
+                // Load the HabitDetails view
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("HabitDetails.fxml"));
+                Parent root = loader.load();
+
+                // Get the controller and set the habit data
+                HabitDetailsController controller = loader.getController();
+                controller.setHabit(habit);
+
+                // Get the current stage and set the new scene
+                Stage stage = (Stage) viewDetailsButton.getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return viewDetailsButton;
+    }
+
+    private Button getRemoveButton(Habit habit, VBox habitContainer, HBox circlesRow) {
         Button removeButton = new Button("X");
         removeButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #22369f; -fx-font-size: 10; -fx-padding: 0;");
         removeButton.setMinSize(20, 20);
@@ -144,37 +210,6 @@ public class DashboardController {
                 }
             }
         });
-
-        for (int i = 0; i < 7; i++) {
-            Circle circle = new Circle(10);
-            circle.setFill(defaultColor);
-
-            int finalI = i;
-            circle.setOnMouseClicked(event -> {
-                if (!circleClicked[finalI]) {
-                    circle.setFill(circleColor);
-                    circleClicked[finalI] = true;
-                    currentStreak[0]++;
-                    if (currentStreak[0] > longestStreak[0]) {
-                        longestStreak[0] = currentStreak[0];
-                    }
-                } else {
-                    circle.setFill(defaultColor);
-                    circleClicked[finalI] = false;
-                    currentStreak[0]--;
-                }
-                streakCountText.setText(String.valueOf(currentStreak[0]));
-                dashboardService.updateHabitStreak(habit.getId(), currentStreak[0], longestStreak[0]);
-            });
-
-            circlesRow.getChildren().add(circle);
-        }
-
-        circlesRow.getChildren().addAll(streakCountText, removeButton);
-
-        // Erhöhe den Abstand zwischen den Reihen
-        CirclePane.setSpacing(35); // Abstand zwischen den Reihen im CirclePane (VBox)
-
-        CirclePane.getChildren().add(circlesRow);
+        return removeButton;
     }
 }

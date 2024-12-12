@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="habitContainer" fx:controller="com.example.habittracker.HabitViewController" xmlns="http://javafx.com/javafx/23.0.1" >
+    <HBox alignment="CENTER" spacing="10.0"  >
+        <Text fx:id="habitNameText" style="-fx-font-size: 18px; -fx-fill: white;" text="Running" HBox.hgrow="ALWAYS" />
+        <HBox fx:id="streakButtonsRow" alignment="CENTER" spacing="10">
+            <Circle fx:id="day1Button" fill="#dddddd" radius="10.0" strokeWidth="2.0" />
+            <Circle fx:id="day2Button" fill="#dddddd" radius="10.0" />
+            <Circle fx:id="day3Button" fill="#dddddd" radius="10.0" />
+            <Circle fx:id="day4Button" fill="#dddddd" radius="10.0" />
+            <Circle fx:id="day5Button" fill="#dddddd" radius="10.0" />
+            <Circle fx:id="day6Button" fill="#dddddd" radius="10.0" />
+            <Circle fx:id="day7Button" fill="#dddddd" radius="10.0" />
+        </HBox>
+        <Text fx:id="streakCountText" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-fill: #22369F;" />
+        <Text fx:id="longestStreakText" style="-fx-font-size: 18px; -fx-fill: white;" text="0">
+            <font>
+                <Font size="20.0" />
+            </font></Text>
+        <Button fx:id="removeButton" style="-fx-background-color: transparent; -fx-text-fill: #22369f; -fx-font-size: 10;" text="Remove" />
+        <Button fx:id="viewDetailsButton" style="-fx-background-color: transparent; -fx-text-fill: #22369f; -fx-font-size: 10;" text="View Details" />
+    </HBox>
+</VBox>
+

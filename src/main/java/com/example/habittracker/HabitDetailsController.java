@@ -16,6 +16,7 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
+import org.database.Habit;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 
 public class HabitDetailsController {
 
@@ -31,19 +33,25 @@ public class HabitDetailsController {
     @FXML
     private Button editButton, deleteButton, syncButton, backButton;
 
-    // Example habit data (replace with dynamic data)
     private String habitName = "Reading";
-    private String habitFrequency = "Daily";
-    private String habitReminderTime = "08:00 AM";
     private int habitStreak = 5;
 
     @FXML
     public void initialize() {
         // Populate labels with habit details
         habitNameLabel.setText(habitName);
+        String habitFrequency = "Daily";
         habitFrequencyLabel.setText(habitFrequency);
+        String habitReminderTime = "08:00 AM";
         habitReminderTimeLabel.setText(habitReminderTime);
         habitStreakLabel.setText(habitStreak + " Days");
+    }
+
+    public void setHabit(Habit habit) {
+        habitName = habit.getHabitName();
+        habitStreak = habit.getCurrentStreak();
+        habitNameLabel.setText(habitName);
+        habitStreakLabel.setText(habitStreak + "");
     }
 
     @FXML
@@ -69,8 +77,8 @@ public class HabitDetailsController {
                     .build();
 
             // Set up habit details
-            String habitTitle = "Habit: Reading";
-            String habitDescription = "Daily habit reminder for reading.";
+            String habitTitle = "Habit: " + habitName;
+            String habitDescription = "Reminder for habit: " + habitName;
             int habitDurationMinutes = 30; // Duration of the event in minutes
             LocalDate startDate = LocalDate.now(); // Start from today
 
@@ -108,7 +116,7 @@ public class HabitDetailsController {
     private void handleBack() {
         try {
             // Load the Dashboard view
-            Parent root = FXMLLoader.load(getClass().getResource("Dashboard-view.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Dashboard-view.fxml")));
 
             // Get the current stage from any node in the current scene
             Stage stage = (Stage) backButton.getScene().getWindow();
@@ -118,8 +126,6 @@ public class HabitDetailsController {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            // Print stack trace for debugging
-            e.printStackTrace();
 
             // Show an alert to inform the user of the error
             Alert alert = new Alert(Alert.AlertType.ERROR);
