@@ -65,98 +65,22 @@
          <center>
             <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <GridPane fx:id="CircleGridPane" layoutX="19.0" layoutY="54.0" prefHeight="39.0" prefWidth="318.0">
+                  <GridPane fx:id="CircleGridPane" layoutX="19.0" layoutY="54.0" prefHeight="40.0" prefWidth="288.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <!-- Dynamische Spalten mit engeren Abständen -->
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints maxHeight="45.66666259765625" minHeight="0.0" prefHeight="20.000006103515624" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="98.8" minHeight="5.3333389282226555" prefHeight="21.59999389648437" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="25.0" minHeight="20.0" prefHeight="25.0" />
+                        <RowConstraints maxHeight="25.0" minHeight="20.0" prefHeight="25.0" />
                      </rowConstraints>
-                     <children>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="Mon" textAlignment="CENTER" wrappingWidth="36.0">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="Tue" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="1">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="Wed" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="2">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="Thu" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="3">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="Fri" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="4">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="Sat" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="5">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="Sun" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="6">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="Streak" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="7">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="30.09" textAlignment="CENTER" wrappingWidth="36.0" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="01.10" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="02.10" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="03.10" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="04.10" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="05.10" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3a51ca" strokeType="OUTSIDE" strokeWidth="0.0" text="06.10" textAlignment="CENTER" wrappingWidth="36.0" GridPane.columnIndex="6" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Text>
-                     </children>
+                     <!-- Dynamischer Inhalt wird über den Controller hinzugefügt -->
                   </GridPane>
                   <VBox fx:id="CirclePane" layoutX="26.0" layoutY="94.0" prefHeight="246.0" />
                </children>

@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -20,7 +21,9 @@ import org.database.services.DashboardService;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class DashboardController {
@@ -31,6 +34,9 @@ public class DashboardController {
     VBox HabitPane; // Pane für die Habits
     @FXML
     VBox CirclePane; // Pane für die Streak-Kreise
+
+    @FXML
+    GridPane CircleGridPane; // GridPane für die Wochentage und Daten
 
     private final Color circleColor = Color.web("#3A51CA");
     private final Color defaultColor = Color.WHITE;
@@ -46,6 +52,7 @@ public class DashboardController {
             receiveData();
             dashboardService = new DashboardService();
             currentUser = user.GetUserName(); // Benutzername aus Session laden
+            initializeDateHeaders(); // Wochentage und Daten dynamisch setzen
             loadHabits();
 
             // Event-Handler für den Button "+ New Habit"
@@ -62,6 +69,32 @@ public class DashboardController {
         }
 
         System.out.println("Current User: " + user.GetUserName());
+    }
+
+    void initializeDateHeaders() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE", Locale.ENGLISH); // Format für Wochentag (z.B. Mon)
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM"); // Format für Datum (z.B. 01.10)
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = today.minusDays(6 - i); // Berechnung der letzten 6 Tage und heute
+
+            // Wochentag
+            Text dayText = new Text(date.format(dayFormatter));
+            dayText.setFill(Color.web("#3A51CA"));
+            dayText.setFont(Font.font("System Bold", 12));
+            GridPane.setColumnIndex(dayText, i); // Wochentage in die Zeile 0 setzen
+            GridPane.setRowIndex(dayText, 0);
+            CircleGridPane.getChildren().add(dayText);
+
+            // Datum
+            Text dateText = new Text(date.format(dateFormatter));
+            dateText.setFill(Color.web("#3A51CA"));
+            dateText.setFont(Font.font("System", 10));
+            GridPane.setColumnIndex(dateText, i); // Daten in die Zeile 1 setzen
+            GridPane.setRowIndex(dateText, 1);
+            CircleGridPane.getChildren().add(dateText);
+        }
     }
 
     void loadHabits() {
@@ -93,7 +126,6 @@ public class DashboardController {
             }
         });
     }
-
 
     void addHabitToPane(Habit habit) {
         VBox habitContainer = new VBox();
