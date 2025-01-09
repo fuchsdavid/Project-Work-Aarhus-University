@@ -148,28 +148,42 @@ public class DashboardController {
         final int[] currentStreak = {habit.getCurrentStreak()};
         final int[] longestStreak = {habit.getLongestStreak()};
 
+        // Anzeige der aktuellen Streak
+        Text currentStreakText = new Text(String.valueOf(currentStreak[0]));
+        currentStreakText.setFont(Font.font("System", FontWeight.BOLD, 12));
+        currentStreakText.setFill(Color.web("#3A51CA"));
+
+        Circle[] circles = new Circle[7];
+        Integer[] statuses = new Integer[7];
+
         for (int i = 0; i < 7; i++) {
             Circle circle = new Circle(10);
-            String date = LocalDate.now().minusDays(6 - i).toString(); // Datum für jeden Tag der Woche
+            String date = LocalDate.now().minusDays(6 - i).toString();
             Integer status = dashboardService.getEntryStatus(habit.getId(), date);
 
-            circle.setFill((status != null && status == 1) ? circleColor : defaultColor);
+            statuses[i] = (status != null) ? status : 0;
+            circle.setFill((statuses[i] == 1) ? circleColor : defaultColor);
+            circles[i] = circle;
 
             int finalI = i;
             circle.setOnMouseClicked(event -> {
                 boolean isClicked = circle.getFill().equals(defaultColor);
                 circle.setFill(isClicked ? circleColor : defaultColor);
 
-                int value = isClicked ? 1 : 0;
-                if (isClicked) {
-                    currentStreak[0]++;
-                    longestStreak[0] = Math.max(longestStreak[0], currentStreak[0]);
-                } else {
-                    currentStreak[0]--;
+                statuses[finalI] = isClicked ? 1 : 0;
+
+                // Überprüfe und aktualisiere den Streak
+                currentStreak[0] = calculateCurrentStreak(statuses);
+                currentStreakText.setText(String.valueOf(currentStreak[0]));
+
+
+                if (currentStreak[0] > longestStreak[0]) {
+                    longestStreak[0] = currentStreak[0];
+                    dashboardService.updateHabitStreak(habit.getId(), currentStreak[0], longestStreak[0]);
+                    longestStreakText.setText("Longest Streak: " + longestStreak[0]);
                 }
 
-                dashboardService.updateEntry(habit.getId(), date, value);
-                dashboardService.updateHabitStreak(habit.getId(), currentStreak[0], longestStreak[0]);
+                dashboardService.updateEntry(habit.getId(), date, statuses[finalI]);
             });
 
             circlesRow.getChildren().add(circle);
@@ -178,10 +192,27 @@ public class DashboardController {
         Button removeButton = getRemoveButton(habit, habitContainer, circlesRow);
         Button viewDetailsButton = getViewDetailsButton(habit);
 
-        circlesRow.getChildren().addAll(removeButton, viewDetailsButton);
-
-        CirclePane.setSpacing(35); // Abstand zwischen den Reihen im CirclePane (VBox)
+        circlesRow.getChildren().addAll(currentStreakText, removeButton, viewDetailsButton);
+        CirclePane.setSpacing(35);
         CirclePane.getChildren().add(circlesRow);
+    }
+
+    private int calculateCurrentStreak(Integer[] statuses) {
+        int streak = 0;
+        int consecutiveMisses = 0;
+
+        for (int i = statuses.length - 1; i >= 0; i--) {
+            if (statuses[i] == 1) {
+                streak++;
+                consecutiveMisses = 0; // Reset, wenn ein aktivierter Kreis gefunden wird
+            } else {
+                consecutiveMisses++;
+                if (consecutiveMisses == 2) {
+                    break; // Stoppe den Streak, wenn zwei aufeinanderfolgende deaktivierte Kreise gefunden wurden
+                }
+            }
+        }
+        return streak;
     }
 
     private Button getViewDetailsButton(Habit habit) {
