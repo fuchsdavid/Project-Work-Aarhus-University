@@ -17,9 +17,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.database.Habit;
 import org.database.services.DashboardService;
-import org.database.services.UserService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,23 +38,7 @@ public class DashboardController {
     DashboardService dashboardService;
     private String currentUser; // Der Benutzername des aktuell eingeloggten Benutzers
     Stage stage;
-    Scene scene;
     DomainUser user;
-
-    UserService userService;
-
-    private void receiveData() {
-        stage = (Stage) (HabitPane.getScene().getWindow());
-        user = (DomainUser) stage.getUserData();
-
-        // Check if user is null (for testing purposes)
-        if (user == null) {
-            user = new DomainUser("test");
-        }
-
-        System.out.println(user.GetUserName());
-
-    }
 
     @FXML
     public void initialize() {
@@ -69,9 +53,19 @@ public class DashboardController {
         });
     }
 
+    private void receiveData() {
+        stage = (Stage) (HabitPane.getScene().getWindow());
+        user = (DomainUser) stage.getUserData();
+
+        if (user == null) {
+            user = new DomainUser("test");
+        }
+
+        System.out.println("Current User: " + user.GetUserName());
+    }
+
     void loadHabits() {
         List<Habit> habits = dashboardService.getUserHabits(currentUser);
-
         for (Habit habit : habits) {
             addHabitToPane(habit);
         }
@@ -87,12 +81,19 @@ public class DashboardController {
 
         result.ifPresent(habitName -> {
             if (!habitName.trim().isEmpty()) {
-                dashboardService.addHabit(habitName, currentUser);
-                Habit newHabit = new Habit(habitName, null); // Dummy Habit für Anzeige
-                addHabitToPane(newHabit);
+                // Habit zur Datenbank hinzufügen und das Habit-Objekt abrufen
+                Habit newHabit = dashboardService.addHabit(habitName, currentUser);
+
+                if (newHabit != null && newHabit.getId() != null) {
+                    // Neue Habit sofort zur Benutzeroberfläche hinzufügen
+                    addHabitToPane(newHabit);
+                } else {
+                    System.err.println("Failed to load the newly added habit: " + habitName);
+                }
             }
         });
     }
+
 
     void addHabitToPane(Habit habit) {
         VBox habitContainer = new VBox();
@@ -114,45 +115,40 @@ public class DashboardController {
 
         final int[] currentStreak = {habit.getCurrentStreak()};
         final int[] longestStreak = {habit.getLongestStreak()};
-        boolean[] circleClicked = new boolean[7];
-
-        Text streakCountText = new Text(String.valueOf(currentStreak[0]));
-        streakCountText.setFont(Font.font("System", FontWeight.BOLD, 14));
-        streakCountText.setFill(Color.web("#22369F"));
-
-        Button removeButton = getRemoveButton(habit, habitContainer, circlesRow);
-        Button viewDetailsButton = getViewDetailsButton(habit);
 
         for (int i = 0; i < 7; i++) {
             Circle circle = new Circle(10);
-            circle.setFill(defaultColor);
+            String date = LocalDate.now().minusDays(6 - i).toString(); // Datum für jeden Tag der Woche
+            Integer status = dashboardService.getEntryStatus(habit.getId(), date);
+
+            circle.setFill((status != null && status == 1) ? circleColor : defaultColor);
 
             int finalI = i;
             circle.setOnMouseClicked(event -> {
-                if (!circleClicked[finalI]) {
-                    circle.setFill(circleColor);
-                    circleClicked[finalI] = true;
+                boolean isClicked = circle.getFill().equals(defaultColor);
+                circle.setFill(isClicked ? circleColor : defaultColor);
+
+                int value = isClicked ? 1 : 0;
+                if (isClicked) {
                     currentStreak[0]++;
-                    if (currentStreak[0] > longestStreak[0]) {
-                        longestStreak[0] = currentStreak[0];
-                    }
+                    longestStreak[0] = Math.max(longestStreak[0], currentStreak[0]);
                 } else {
-                    circle.setFill(defaultColor);
-                    circleClicked[finalI] = false;
                     currentStreak[0]--;
                 }
-                streakCountText.setText(String.valueOf(currentStreak[0]));
+
+                dashboardService.updateEntry(habit.getId(), date, value);
                 dashboardService.updateHabitStreak(habit.getId(), currentStreak[0], longestStreak[0]);
             });
 
             circlesRow.getChildren().add(circle);
         }
 
-        circlesRow.getChildren().addAll(streakCountText, removeButton, viewDetailsButton);
+        Button removeButton = getRemoveButton(habit, habitContainer, circlesRow);
+        Button viewDetailsButton = getViewDetailsButton(habit);
 
-        // Erhöhe den Abstand zwischen den Reihen
+        circlesRow.getChildren().addAll(removeButton, viewDetailsButton);
+
         CirclePane.setSpacing(35); // Abstand zwischen den Reihen im CirclePane (VBox)
-
         CirclePane.getChildren().add(circlesRow);
     }
 
@@ -162,15 +158,12 @@ public class DashboardController {
 
         viewDetailsButton.setOnAction(event -> {
             try {
-                // Load the HabitDetails view
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("HabitDetails.fxml"));
                 Parent root = loader.load();
 
-                // Get the controller and set the habit data
                 HabitDetailsController controller = loader.getController();
                 controller.setHabit(habit);
 
-                // Get the current stage and set the new scene
                 Stage stage = (Stage) viewDetailsButton.getScene().getWindow();
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
@@ -198,13 +191,10 @@ public class DashboardController {
             Optional<ButtonType> result = alert.showAndWait();
 
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                // Habit aus der SQL-Datenbank löschen
                 boolean isDeleted = dashboardService.deleteHabit(habit.getId());
                 if (isDeleted) {
-                    // Entferne das Habit aus der Benutzeroberfläche
                     HabitPane.getChildren().remove(habitContainer);
                     CirclePane.getChildren().remove(circlesRow);
-                    System.out.println("Habit successfully deleted: " + habit.getHabitName());
                 } else {
                     System.err.println("Failed to delete habit from database: " + habit.getHabitName());
                 }

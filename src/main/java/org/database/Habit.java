@@ -1,4 +1,5 @@
 package org.database;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -22,29 +23,63 @@ public class Habit {
     @JoinColumn(name = "UserName")
     private User user;
 
-    public Integer getId() {return this.id;}
-    public void setId(Integer id) {this.id = id;}
+    // Standard-Konstruktor
+    public Habit() {}
 
-    public Integer getLongestStreak() {return this.longestStreak;}
-    public void setLongestStreak(Integer longestStreak) {this.longestStreak = longestStreak;}
-
-    public Integer getCurrentStreak() {return this.currentStreak;}
-    public void setCurrentStreak(Integer currentStreak) {this.currentStreak = currentStreak;}
-
-    public User getUser() {return this.user;}
-    public void setUser(User user) {this.user = user;}
-
-    public String getHabitName() {return this.habitName;}
-    public void setHabitName(String habitName) {this.habitName = habitName;}
-
-
-    public Habit() {};
-
+    // Konstruktor mit habitName und Benutzer
     public Habit(String name, User user) {
         this.habitName = name;
         this.user = user;
         this.currentStreak = 0;
         this.longestStreak = 0;
+    }
+
+    // Neuer Konstruktor mit allen Werten
+    public Habit(String name, int currentStreak, int longestStreak, User user) {
+        this.habitName = name;
+        this.currentStreak = currentStreak;
+        this.longestStreak = longestStreak;
+        this.user = user;
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getLongestStreak() {
+        return this.longestStreak;
+    }
+
+    public void setLongestStreak(Integer longestStreak) {
+        this.longestStreak = longestStreak;
+    }
+
+    public Integer getCurrentStreak() {
+        return this.currentStreak;
+    }
+
+    public void setCurrentStreak(Integer currentStreak) {
+        this.currentStreak = currentStreak;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getHabitName() {
+        return this.habitName;
+    }
+
+    public void setHabitName(String habitName) {
+        this.habitName = habitName;
     }
 
     @Override
@@ -63,7 +98,7 @@ public class Habit {
     @Override
     public String toString() {
         return ("[ Habit: " + this.habitName +
-                "\n\tbelongs to: " + this.user.getUserName() +
+                "\n\tbelongs to: " + (this.user != null ? this.user.getUserName() : "No User") +
                 "\n\tlongest streak: " + this.longestStreak +
                 "\n\tcurrent streak: " + this.currentStreak +
                 "\n\tid: " + this.id +
